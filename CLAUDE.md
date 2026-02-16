@@ -208,3 +208,10 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- TypeScript/JavaScript (Docusaurus frontend, Node.js 18+), Python 3.11+ (FastAPI backend) + Docusaurus 3.x, React 18, FastAPI, Pydantic v2, openai, qdrant-client, asyncpg, Better-Auth, Tailwind CSS (001-physical-ai-textbook)
+- Neon Serverless Postgres (user data, sessions, chat history), Qdrant Cloud (vector embeddings) (001-physical-ai-textbook)
+
+## Recent Changes
+- 001-physical-ai-textbook: Added TypeScript/JavaScript (Docusaurus frontend, Node.js 18+), Python 3.11+ (FastAPI backend) + Docusaurus 3.x, React 18, FastAPI, Pydantic v2, openai, qdrant-client, asyncpg, Better-Auth, Tailwind CSS

@@ -1,0 +1,393 @@
+openapi: 3.0.3
+info:
+  title: Physical AI Textbook API
+  description: Backend API for the Physical AI & Humanoid Robotics textbook RAG chatbot, user profiles, and content services.
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+    description: Production (Vercel)
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /api/chat:
+    post:
+      operationId: sendChatMessage
+      summary: Send a chat message and receive a RAG-powered response
+      description: |
+        Accepts a user question, retrieves relevant textbook content via vector search,
+        and returns an AI-generated answer with chapter citations. Supports conversation
+        context for follow-up questions. Rate limited: 10/hr anonymous, 60/hr authenticated.
+      tags: [Chat]
+      security:
+        - BearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Chat response with citations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+        '503':
+          description: Chatbot service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceUnavailableError'
+
+  /api/chat/stream:
+    post:
+      operationId: streamChatMessage
+      summary: Send a chat message and receive a streaming response via SSE
+      description: Same as /api/chat but returns Server-Sent Events for real-time streaming.
+      tags: [Chat]
+      security:
+        - BearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Streaming chat response
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream of ChatStreamEvent objects
+
+  /api/chat/history:
+    get:
+      operationId: getChatHistory
+      summary: Get conversation history for authenticated user
+      description: Returns paginated list of past conversations. Requires authentication.
+      tags: [Chat]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationListResponse'
+        '401':
+          description: Not authenticated
+
+  /api/chat/history/{conversation_id}:
+    get:
+      operationId: getConversationMessages
+      summary: Get messages for a specific conversation
+      tags: [Chat]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDetailResponse'
+        '401':
+          description: Not authenticated
+        '404':
+          description: Conversation not found
+
+  /api/user/profile:
+    get:
+      operationId: getUserProfile
+      summary: Get current user's profile and preferences
+      tags: [User]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Not authenticated
+
+    put:
+      operationId: updateUserProfile
+      summary: Update user preferences (skill level, language, background)
+      tags: [User]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid input
+        '401':
+          description: Not authenticated
+
+  /api/health:
+    get:
+      operationId: healthCheck
+      summary: API health check
+      tags: [System]
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  qdrant:
+                    type: string
+                    enum: [connected, disconnected]
+                  database:
+                    type: string
+                    enum: [connected, disconnected]
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Better-Auth session token passed via Authorization header or cookie
+
+  schemas:
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          maxLength: 2000
+          description: User's question about textbook content
+          example: "What is a ROS 2 node?"
+        conversation_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of existing conversation for follow-ups. Null for new conversation.
+        module_filter:
+          type: string
+          nullable: true
+          description: Optional module to scope search (e.g., "module-1-ros2")
+        difficulty_filter:
+          type: string
+          nullable: true
+          enum: [beginner, intermediate, advanced]
+          description: Optional difficulty level to scope search
+
+    ChatResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: AI-generated answer
+        conversation_id:
+          type: string
+          format: uuid
+          description: Conversation ID (new or existing)
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        rate_limit:
+          $ref: '#/components/schemas/RateLimitInfo'
+
+    Citation:
+      type: object
+      properties:
+        module:
+          type: string
+          example: "module-1-ros2"
+        chapter:
+          type: string
+          example: "01-ros2-architecture"
+        section:
+          type: string
+          example: "Node Communication"
+        url:
+          type: string
+          example: "/docs/module-1-ros2/01-ros2-architecture#node-communication"
+
+    RateLimitInfo:
+      type: object
+      properties:
+        remaining:
+          type: integer
+          description: Queries remaining in current window
+        limit:
+          type: integer
+          description: Total queries allowed per window (10 or 60)
+        reset_at:
+          type: string
+          format: date-time
+          description: When the current rate limit window resets
+
+    RateLimitError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Rate limit exceeded"
+        message:
+          type: string
+          example: "Query limit reached. Sign in for more questions or try again later."
+        reset_at:
+          type: string
+          format: date-time
+
+    ServiceUnavailableError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Service unavailable"
+        message:
+          type: string
+          example: "Chatbot is temporarily unavailable. Please try again later."
+
+    ConversationListResponse:
+      type: object
+      properties:
+        conversations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              current_module:
+                type: string
+                nullable: true
+              message_count:
+                type: integer
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    ConversationDetailResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              role:
+                type: string
+                enum: [user, assistant]
+              content:
+                type: string
+              citations:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Citation'
+                nullable: true
+              created_at:
+                type: string
+                format: date-time
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          nullable: true
+        background:
+          type: string
+          enum: [software, hardware]
+        skill_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        language_preference:
+          type: string
+          enum: [en, ur]
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        background:
+          type: string
+          enum: [software, hardware]
+        skill_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        language_preference:
+          type: string
+          enum: [en, ur]
+        name:
+          type: string
