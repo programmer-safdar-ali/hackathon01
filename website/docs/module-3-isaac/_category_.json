@@ -1,0 +1,8 @@
+{
+  "label": "Module 3: NVIDIA Isaac Platform",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Harness NVIDIA Isaac for robot perception, reinforcement learning, and sim-to-real transfer on GPU-accelerated platforms."
+  }
+}

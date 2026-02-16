@@ -1,0 +1,8 @@
+{
+  "label": "Module 4: VLA Robotics",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Build Vision-Language-Action pipelines for conversational robots that see, understand, and act on natural language commands."
+  }
+}

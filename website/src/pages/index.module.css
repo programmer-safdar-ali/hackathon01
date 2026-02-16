@@ -1,8 +1,3 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
 .heroBanner {
   padding: 4rem 0;
   text-align: center;
@@ -20,4 +15,71 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.modules {
+  padding: 3rem 0;
+}
+
+.moduleCard {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.moduleCard:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.moduleHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.moduleIcon {
+  font-size: 1.5rem;
+}
+
+.moduleNumber {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.moduleLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.moduleLink:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.moduleFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.quickLinks {
+  padding: 3rem 0;
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .quickLinks {
+  background: var(--ifm-color-emphasis-100);
 }

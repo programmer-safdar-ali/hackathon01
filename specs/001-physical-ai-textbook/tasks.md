@@ -29,7 +29,7 @@
 
 - [x] T001 Initialize Docusaurus 3.x project in website/ with TypeScript template and install dependencies (react, react-dom, @docusaurus/core, @docusaurus/preset-classic)
 - [x] T002 Configure website/docusaurus.config.js with site metadata (title: "Physical AI & Humanoid Robotics", tagline, URL), Mermaid plugin (@docusaurus/theme-mermaid), and local search plugin (@easyops-cn/docusaurus-search-local)
-- [ ] T003 [P] Install and configure Tailwind CSS in website/ with website/tailwind.config.js and website/src/css/custom.css for theme styling
+- [x] T003 [P] Install and configure Tailwind CSS in website/ with website/tailwind.config.js and website/src/css/custom.css for theme styling
 - [x] T004 [P] Configure website/sidebars.js with sidebar categories for four modules, capstone, and hardware guides
 - [x] T005 Initialize FastAPI project in backend/ with backend/pyproject.toml and backend/requirements.txt (fastapi, uvicorn, pydantic[v2], openai, qdrant-client, asyncpg, sqlalchemy[asyncio], alembic, slowapi, python-dotenv)
 - [x] T006 [P] Create backend/app/__init__.py, backend/app/config.py with Pydantic BaseSettings loading env vars (OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, DATABASE_URL, CORS_ORIGINS, BETTER_AUTH_SECRET)
@@ -48,16 +48,16 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T011 Create backend/app/main.py with FastAPI app instance, CORS middleware (origins from config), and include API routers
-- [ ] T012 [P] Create backend/app/models/database.py with SQLAlchemy async engine, async sessionmaker, and Base declarative class using DATABASE_URL from config
-- [ ] T013 [P] Create backend/app/services/qdrant_client.py with Qdrant Cloud client initialization (url, api_key from config) and collection existence check for "textbook_content"
-- [ ] T014 [P] Create backend/app/services/embeddings.py with async function to generate embeddings using OpenAI text-embedding-3-small (1536 dimensions)
-- [ ] T015 Initialize Alembic in backend/alembic/ with backend/alembic/alembic.ini configured for async Postgres (Neon) using DATABASE_URL
-- [ ] T016 Create backend/app/models/chat.py with SQLAlchemy models for chat_conversations and chat_messages tables per data-model.md
-- [ ] T017 [P] Create backend/app/models/user.py with SQLAlchemy models for users, sessions, user_profiles, and rate_limits tables per data-model.md
-- [ ] T018 Create first Alembic migration in backend/alembic/versions/ for all 6 tables (users, sessions, user_profiles, chat_conversations, chat_messages, rate_limits) with indexes per data-model.md
-- [ ] T019 [P] Create backend/app/api/__init__.py with APIRouter setup and register chat, user, and health routers in main.py
-- [ ] T020 Create backend/app/api/health.py with GET /api/health endpoint returning status, qdrant connectivity, and database connectivity per contracts/api.yaml
+- [x] T011 Create backend/app/main.py with FastAPI app instance, CORS middleware (origins from config), and include API routers
+- [x] T012 [P] Create backend/app/models/database.py with SQLAlchemy async engine, async sessionmaker, and Base declarative class using DATABASE_URL from config
+- [x] T013 [P] Create backend/app/services/qdrant_client.py with Qdrant Cloud client initialization (url, api_key from config) and collection existence check for "textbook_content"
+- [x] T014 [P] Create backend/app/services/embeddings.py with async function to generate embeddings using OpenAI text-embedding-3-small (1536 dimensions)
+- [x] T015 Initialize Alembic in backend/alembic/ with backend/alembic/alembic.ini configured for async Postgres (Neon) using DATABASE_URL
+- [x] T016 Create backend/app/models/chat.py with SQLAlchemy models for chat_conversations and chat_messages tables per data-model.md
+- [x] T017 [P] Create backend/app/models/user.py with SQLAlchemy models for users, sessions, user_profiles, and rate_limits tables per data-model.md
+- [x] T018 Create first Alembic migration in backend/alembic/versions/ for all 6 tables (users, sessions, user_profiles, chat_conversations, chat_messages, rate_limits) with indexes per data-model.md
+- [x] T019 [P] Create backend/app/api/__init__.py with APIRouter setup and register chat, user, and health routers in main.py
+- [x] T020 Create backend/app/api/health.py with GET /api/health endpoint returning status, qdrant connectivity, and database connectivity per contracts/api.yaml
 
 **Checkpoint**: Foundation ready. `alembic upgrade head` creates all tables. GET /api/health returns JSON with connection statuses. User story implementation can begin.
 
