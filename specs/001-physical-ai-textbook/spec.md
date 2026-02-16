@@ -131,6 +131,8 @@ A student engages with the AI tutor for guided learning beyond simple Q&A. The t
 - What happens when a student toggles language mid-assessment? System MUST complete the assessment in the original language; language change applies to the next page load.
 - What happens when the vector search returns no relevant results for a chatbot query? System MUST respond with "I couldn't find specific information about that in the textbook. Try rephrasing your question or browse the relevant module directly."
 - What happens during concurrent chatbot usage by 100+ users? System MUST maintain sub-2-second response times without degradation.
+- What happens when an anonymous user exceeds 10 chatbot queries per hour? System MUST display a message: "Query limit reached. Sign in for more questions or try again later." and block further queries until the window resets.
+- What happens when an authenticated user exceeds 60 chatbot queries per hour? System MUST display a message: "You've reached your hourly limit. Please try again later." and block further queries until the window resets.
 - What happens when a student's session expires during a tutoring conversation? System MUST preserve the last 5 messages and allow re-authentication to resume.
 
 ## Requirements *(mandatory)*
@@ -140,8 +142,10 @@ A student engages with the AI tutor for guided learning beyond simple Q&A. The t
 - **FR-001**: System MUST present four learning modules, each with a structured chapter hierarchy, navigable via sidebar and breadcrumbs.
 - **FR-002**: System MUST render code examples with syntax highlighting for Python and ROS 2 command syntax, with a copy-to-clipboard button on each code block.
 - **FR-003**: System MUST display system architecture diagrams, physics simulation visualizations, and AI perception pipeline diagrams inline within chapters.
+- **FR-003a**: System MUST provide a built-in client-side full-text search across all chapters, enabling keyword lookup without external dependencies or API calls.
 - **FR-004**: System MUST provide an embedded chatbot widget accessible from every page that answers questions about textbook content using semantic search and content retrieval.
 - **FR-005**: System MUST return chatbot responses within 2 seconds (p95 latency) with citations referencing specific chapters or sections.
+- **FR-005a**: System MUST enforce tiered chatbot rate limits: 10 queries per hour for anonymous users, 60 queries per hour for authenticated users. Users exceeding their limit MUST see a clear message and be blocked until the hourly window resets.
 - **FR-006**: System MUST include interactive knowledge checks at the end of each chapter with immediate scoring and feedback.
 - **FR-007**: System MUST provide a 13-week structured learning schedule with weekly breakdowns mapping chapters to weeks.
 - **FR-008**: System MUST include a capstone project guide that integrates concepts from all four modules for building an autonomous humanoid robot with voice commands and object manipulation.
@@ -150,7 +154,7 @@ A student engages with the AI tutor for guided learning beyond simple Q&A. The t
 - **FR-011**: System MUST provide automated build and deployment pipelines triggered by code changes.
 - **FR-012**: System MUST support user account creation and authentication for personalized features.
 - **FR-013**: System MUST allow authenticated users to select their background (software/hardware) and skill level (beginner/intermediate/advanced) during onboarding.
-- **FR-014**: System MUST display chapter content adapted to the user's selected difficulty level, with a per-chapter toggle to switch levels.
+- **FR-014**: System MUST display chapter content adapted to the user's selected difficulty level using tabbed components (Beginner / Intermediate / Advanced) within each chapter. Authors write all three levels in a single content file. The active tab persists based on user preference; unauthenticated users default to the Intermediate tab.
 - **FR-015**: System MUST support Urdu language translation with RTL text rendering, with a per-chapter language toggle.
 - **FR-016**: System MUST maintain full functionality for unauthenticated users (content browsing, chatbot, assessments) with personalization features gated behind authentication.
 - **FR-017**: System MUST provide an AI tutoring mode that supports multi-turn conversations, concept explanations, practice problem generation, and code review within the chatbot interface.
@@ -161,15 +165,25 @@ A student engages with the AI tutor for guided learning beyond simple Q&A. The t
 ### Key Entities
 
 - **Module**: A top-level learning unit (one of four). Contains ordered chapters and a learning objective summary.
-- **Chapter**: A single lesson within a module. Contains text content, code examples, diagrams, and a knowledge check. Supports multiple difficulty variants (beginner/intermediate/advanced) and language variants (English/Urdu).
+- **Chapter**: A single lesson within a module. Contains text content, code examples, diagrams, and a knowledge check. Difficulty variants (beginner/intermediate/advanced) are authored as tabbed sections within a single content file. Language variants (English/Urdu) are separate translation files.
 - **Code Example**: An executable code snippet within a chapter. Has a language identifier, source code, expected output description, and dependency list.
 - **Diagram**: A visual element within a chapter (architecture diagram, simulation visualization, or pipeline diagram). Has alt text, caption, and source format.
 - **Knowledge Check**: An assessment at the end of a chapter. Contains questions (multiple-choice, code-completion, concept-matching), correct answers, and explanations.
 - **User Profile**: An authenticated user's preferences. Includes email, background type (software/hardware), skill level, and language preference.
-- **Chat Conversation**: A sequence of user-chatbot message exchanges. Has a session context, message history, and source citations per response.
+- **Chat Conversation**: A sequence of user-chatbot message exchanges. Has a session context, message history, and source citations per response. For authenticated users, conversations are persisted server-side and resumable across sessions. For anonymous users, conversations are ephemeral and lost when the browser tab closes.
 - **Learning Schedule**: A 13-week plan mapping modules and chapters to weekly milestones with estimated study hours.
 - **Capstone Project**: A multi-step integration project with task list, checkpoint validations, and cross-module references.
 - **Hardware Guide**: Setup instructions for physical hardware (Jetson Orin Nano, robot platforms). Contains parts lists, step-by-step setup, and troubleshooting.
+
+## Clarifications
+
+### Session 2026-02-15
+
+- Q: How should content personalization by difficulty level be implemented within chapters? → A: Tabbed components (Beginner / Intermediate / Advanced) within each chapter file. All three levels authored in a single MDX file with tab group switching.
+- Q: Should chatbot conversations persist across browser sessions? → A: Hybrid — persisted server-side for authenticated users (resumable), ephemeral for anonymous users (lost on tab close).
+- Q: Should the chatbot have rate limiting to prevent abuse and control API costs? → A: Tiered limits — 10 queries/hour for anonymous users, 60 queries/hour for authenticated users.
+- Q: How many chapters per module should the textbook target? → A: 4-5 chapters per module (16-20 total), balancing thorough coverage with the 13-week schedule and deadline constraints.
+- Q: Should the textbook include traditional text search in addition to the chatbot? → A: Yes — built-in client-side full-text search across all chapters, zero external dependencies, complementing the chatbot for quick keyword lookups.
 
 ## Assumptions
 
@@ -188,7 +202,7 @@ A student engages with the AI tutor for guided learning beyond simple Q&A. The t
 
 ### Measurable Outcomes
 
-- **SC-001**: All four learning modules are published with complete chapter content, each containing at minimum 3 chapters with code examples and diagrams.
+- **SC-001**: All four learning modules are published with complete chapter content, each containing 4-5 chapters (16-20 total) with code examples and diagrams.
 - **SC-002**: 100% of published code examples produce the documented output when executed in the specified environment.
 - **SC-003**: The chatbot answers 95% or more of a 100-question curated test set accurately, with correct chapter references.
 - **SC-004**: Users receive chatbot responses in under 2 seconds for 95% of queries under normal load (up to 50 concurrent users).
