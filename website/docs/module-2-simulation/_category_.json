@@ -1,0 +1,8 @@
+{
+  "label": "Module 2: Digital Twin Simulation",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Build and test robots in simulation before deploying to the real world using Gazebo and Unity."
+  }
+}

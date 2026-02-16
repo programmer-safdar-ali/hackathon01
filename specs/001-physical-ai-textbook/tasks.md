@@ -27,16 +27,16 @@
 
 **Purpose**: Initialize all three project directories with dependencies and base configuration
 
-- [ ] T001 Initialize Docusaurus 3.x project in website/ with TypeScript template and install dependencies (react, react-dom, @docusaurus/core, @docusaurus/preset-classic)
-- [ ] T002 Configure website/docusaurus.config.js with site metadata (title: "Physical AI & Humanoid Robotics", tagline, URL), Mermaid plugin (@docusaurus/theme-mermaid), and local search plugin (@easyops-cn/docusaurus-search-local)
+- [x] T001 Initialize Docusaurus 3.x project in website/ with TypeScript template and install dependencies (react, react-dom, @docusaurus/core, @docusaurus/preset-classic)
+- [x] T002 Configure website/docusaurus.config.js with site metadata (title: "Physical AI & Humanoid Robotics", tagline, URL), Mermaid plugin (@docusaurus/theme-mermaid), and local search plugin (@easyops-cn/docusaurus-search-local)
 - [ ] T003 [P] Install and configure Tailwind CSS in website/ with website/tailwind.config.js and website/src/css/custom.css for theme styling
-- [ ] T004 [P] Configure website/sidebars.js with sidebar categories for four modules, capstone, and hardware guides
-- [ ] T005 Initialize FastAPI project in backend/ with backend/pyproject.toml and backend/requirements.txt (fastapi, uvicorn, pydantic[v2], openai, qdrant-client, asyncpg, sqlalchemy[asyncio], alembic, slowapi, python-dotenv)
-- [ ] T006 [P] Create backend/app/__init__.py, backend/app/config.py with Pydantic BaseSettings loading env vars (OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, DATABASE_URL, CORS_ORIGINS, BETTER_AUTH_SECRET)
-- [ ] T007 [P] Create backend/.env.example and website/.env.example with placeholder environment variables per quickstart.md
-- [ ] T008 [P] Create backend/vercel.json with serverless function configuration for FastAPI deployment
-- [ ] T009 [P] Add .gitignore entries for node_modules/, .venv/, __pycache__/, .env, build/, .docusaurus/
-- [ ] T010 [P] Create website/static/img/ directory and add placeholder logo/favicon assets
+- [x] T004 [P] Configure website/sidebars.js with sidebar categories for four modules, capstone, and hardware guides
+- [x] T005 Initialize FastAPI project in backend/ with backend/pyproject.toml and backend/requirements.txt (fastapi, uvicorn, pydantic[v2], openai, qdrant-client, asyncpg, sqlalchemy[asyncio], alembic, slowapi, python-dotenv)
+- [x] T006 [P] Create backend/app/__init__.py, backend/app/config.py with Pydantic BaseSettings loading env vars (OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, DATABASE_URL, CORS_ORIGINS, BETTER_AUTH_SECRET)
+- [x] T007 [P] Create backend/.env.example and website/.env.example with placeholder environment variables per quickstart.md
+- [x] T008 [P] Create backend/vercel.json with serverless function configuration for FastAPI deployment
+- [x] T009 [P] Add .gitignore entries for node_modules/, .venv/, __pycache__/, .env, build/, .docusaurus/
+- [x] T010 [P] Create website/static/img/ directory and add placeholder logo/favicon assets
 
 **Checkpoint**: Both website/ and backend/ directories initialized with dependencies. `npm run start` in website/ shows default Docusaurus site; `uvicorn app.main:app` in backend/ starts (after T011).
 

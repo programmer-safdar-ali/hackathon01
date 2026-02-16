@@ -1,0 +1,9 @@
+[project]
+name = "physical-ai-textbook-api"
+version = "1.0.0"
+description = "FastAPI backend for the Physical AI & Humanoid Robotics textbook RAG chatbot"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

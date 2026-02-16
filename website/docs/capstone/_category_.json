@@ -1,0 +1,8 @@
+{
+  "label": "Capstone Project",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Build an autonomous humanoid robot integrating all four modules — ROS 2, simulation, Isaac AI, and voice-language-action control."
+  }
+}
