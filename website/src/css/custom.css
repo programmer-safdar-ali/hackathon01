@@ -31,3 +31,69 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* ── Global heading font ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', var(--ifm-font-family-base);
+  letter-spacing: -0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Homepage Dark Theme — activated by body.homepage-dark
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Navbar — glassmorphism dark */
+body.homepage-dark .navbar {
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+body.homepage-dark .navbar__title {
+  color: #f8fafc;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body.homepage-dark .navbar__link {
+  color: #94a3b8;
+}
+
+body.homepage-dark .navbar__link:hover,
+body.homepage-dark .navbar__link--active {
+  color: #00d9ff;
+}
+
+body.homepage-dark .navbar__logo img {
+  filter: brightness(0) invert(1);
+}
+
+/* Footer — deep dark */
+body.homepage-dark .footer {
+  background: #010409;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.homepage-dark .footer__title {
+  color: #f8fafc;
+}
+
+body.homepage-dark .footer__link-item {
+  color: #64748b;
+}
+
+body.homepage-dark .footer__link-item:hover {
+  color: #00d9ff;
+}
+
+body.homepage-dark .footer__copyright {
+  color: #334155;
+}
+
+/* Main wrapper background */
+body.homepage-dark .main-wrapper {
+  background: #020617;
+}

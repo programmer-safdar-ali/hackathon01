@@ -1,122 +1,264 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
+import {useEffect} from 'react';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
+import {
+  Layers,
+  Globe,
+  Microchip,
+  BrainCircuit,
+  Rocket,
+  Box,
+  Bot,
+  Cpu,
+  Zap,
+  ArrowRight,
+  ChevronRight,
+  Database,
+  Terminal,
+} from 'lucide-react';
 
 import styles from './index.module.css';
 
-type ModuleCard = {
-  title: string;
+// ─── Data ──────────────────────────────────────────────────────────────────
+
+type ModuleData = {
   number: number;
+  blockId: string;
+  title: string;
   description: string;
   link: string;
   chapters: number;
-  icon: string;
+  accent: 'cyan' | 'purple';
+  Icon: React.ComponentType<{size?: number; strokeWidth?: number}>;
+  FooterIcon: React.ComponentType<{size?: number; strokeWidth?: number}>;
 };
 
-const modules: ModuleCard[] = [
+const modules: ModuleData[] = [
   {
-    title: 'ROS 2 Fundamentals',
     number: 1,
+    blockId: 'BLOCK_01',
+    title: 'ROS 2 Core Systems',
     description:
-      'Master the Robot Operating System 2 — nodes, topics, services, actions, URDF, and TF2 transforms for building modular robot software.',
+      'Master distributed messaging, node orchestration, and real-time TF2 kinematic solvers. The backbone of every robotic deployment.',
     link: '/docs/module-1-ros2/ros2-architecture',
     chapters: 5,
-    icon: '\u{1F916}',
+    accent: 'cyan',
+    Icon: Layers,
+    FooterIcon: Cpu,
   },
   {
-    title: 'Digital Twin Simulation',
     number: 2,
+    blockId: 'BLOCK_02',
+    title: 'Digital Twin Genesis',
     description:
-      'Build and test robots in Gazebo and Unity before deploying to real hardware. Physics engines, sensors, and end-to-end digital twin pipelines.',
+      'Physics-aligned synthetic environments using Gazebo and Unity. High-fidelity data generation for deep reinforcement learning.',
     link: '/docs/module-2-simulation/gazebo-basics',
     chapters: 4,
-    icon: '\u{1F30D}',
+    accent: 'purple',
+    Icon: Globe,
+    FooterIcon: Database,
   },
   {
-    title: 'NVIDIA Isaac Platform',
     number: 3,
+    blockId: 'BLOCK_03',
+    title: 'Isaac Acceleration',
     description:
-      'Harness GPU-accelerated perception, reinforcement learning with Isaac Gym, and sim-to-real transfer on Jetson edge devices.',
+      'Hardware-accelerated perception and sim-to-real transfer learning optimized for edge-compute Jetson platforms.',
     link: '/docs/module-3-isaac/isaac-sdk-setup',
     chapters: 4,
-    icon: '\u{1F9E0}',
+    accent: 'cyan',
+    Icon: Microchip,
+    FooterIcon: Zap,
   },
   {
-    title: 'VLA Robotics',
     number: 4,
+    blockId: 'BLOCK_04',
+    title: 'VLA Architectures',
     description:
-      'Integrate vision, language, and action — from Whisper voice commands to LLM task planning and Vision-Language-Action models.',
+      'Vision-Language-Action models for humanoid autonomy. Teaching machines to understand and act via natural language prompts.',
     link: '/docs/module-4-vla/conversational-robotics',
     chapters: 4,
-    icon: '\u{1F5E3}',
+    accent: 'purple',
+    Icon: BrainCircuit,
+    FooterIcon: Terminal,
   },
 ];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
+// ─── Hero Section ──────────────────────────────────────────────────────────
+
+function HeroSection() {
   return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/">
-            Start Learning
+    <header className={styles.hero}>
+      {/* Left column */}
+      <div className={styles.heroContent}>
+        <div className={styles.heroBadge}>
+          <Zap size={10} strokeWidth={2.5} />
+          <span>Protocol v2025 Active</span>
+        </div>
+
+        <h1 className={styles.heroTitle}>
+          Physical AI<br />
+          <span className={styles.heroGradient}>Robotics</span>
+        </h1>
+
+        <p className={styles.heroSubtitle}>
+          The definitive neural-first textbook for engineering high-fidelity
+          humanoid intelligence and mechanical embodiment.
+        </p>
+
+        <div className={styles.heroCtas}>
+          <Link to="/docs/" className={styles.btnPrimary}>
+            START LEARNING <Terminal size={16} strokeWidth={2} />
           </Link>
-          <Link
-            className="button button--outline button--secondary button--lg"
-            to="/docs/schedule"
-            style={{marginLeft: '1rem'}}>
-            13-Week Schedule
+          <Link to="/docs/schedule" className={styles.btnSecondary}>
+            13-WEEK SCHEDULE
           </Link>
+        </div>
+      </div>
+
+      {/* Right column — robotic arm visual */}
+      <div className={styles.heroVisual}>
+        <div className={styles.heroVisualGlow} />
+        <div className={styles.heroVisualCard}>
+          {/* Cyber grid overlay */}
+          <div className={styles.cyberGrid} />
+
+          {/* Robotic arm SVG */}
+          <svg
+            viewBox="0 0 400 300"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={styles.roboArm}
+          >
+            {/* Mechanical base */}
+            <rect
+              x="80" y="240" width="240" height="30" rx="2"
+              fill="currentColor" fillOpacity="0.05"
+              stroke="currentColor" strokeWidth="1"
+            />
+            <path
+              d="M100 240 L120 200 H280 L300 240"
+              stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4"
+            />
+            {/* Joint 1 */}
+            <circle cx="200" cy="180" r="35"
+              stroke="currentColor" strokeWidth="1" strokeDasharray="10 5"
+              className={styles.spinSlow}
+            />
+            <circle cx="200" cy="180" r="8" fill="currentColor" />
+            {/* Arm segment */}
+            <path
+              d="M200 180 L280 100"
+              stroke="currentColor" strokeWidth="12" strokeLinecap="round"
+              opacity="0.8"
+            />
+            <path
+              d="M200 180 L280 100"
+              stroke="white" strokeWidth="2" strokeLinecap="round"
+              opacity="0.4"
+            />
+            {/* Joint 2 */}
+            <circle cx="280" cy="100" r="25"
+              stroke="currentColor" strokeWidth="1"
+            />
+            <circle cx="280" cy="100" r="6" fill="#a855f7" />
+            {/* Gripper */}
+            <path
+              d="M280 100 L320 40"
+              stroke="currentColor" strokeWidth="8" strokeLinecap="round"
+            />
+            <path
+              d="M310 30 L340 50 M300 45 L330 65"
+              stroke="#a855f7" strokeWidth="3" strokeLinecap="round"
+            />
+            {/* UI elements */}
+            <rect x="40" y="40" width="80" height="4" rx="2"
+              fill="currentColor" fillOpacity="0.3"
+            />
+            <rect x="40" y="50" width="50" height="4" rx="2"
+              fill="currentColor" fillOpacity="0.1"
+            />
+            <circle cx="360" cy="220" r="3" fill="#a855f7"
+              className={styles.pingDot}
+            />
+          </svg>
+
+          {/* Status bar */}
+          <div className={styles.statusBar}>
+            <div className={styles.statusLeft}>
+              <span className={styles.statusDot} />
+              <span>Syncing Neural_Weights</span>
+            </div>
+            <div className={styles.statusRight}>
+              <span className={styles.statusPill}>LRN: 0.001</span>
+              <span className={styles.statusPill}>GPU: 98%</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>
   );
 }
 
-function ModuleCardComponent({title, number, description, link, chapters, icon}: ModuleCard) {
+// ─── Module Card ───────────────────────────────────────────────────────────
+
+function ModuleCard({
+  blockId, title, description, link, chapters, accent, Icon, FooterIcon,
+}: ModuleData) {
+  const isCyan = accent === 'cyan';
   return (
-    <div className={clsx('col col--6')} style={{marginBottom: '1.5rem'}}>
-      <div className={styles.moduleCard}>
-        <div className={styles.moduleHeader}>
-          <span className={styles.moduleIcon}>{icon}</span>
-          <span className={styles.moduleNumber}>Module {number}</span>
+    <div className={`${styles.moduleCard} ${isCyan ? styles.moduleCardCyan : styles.moduleCardPurple}`}>
+      <div className={styles.moduleCardGlow} />
+
+      <div className={styles.moduleCardHeader}>
+        <div className={`${styles.moduleIconWrap} ${isCyan ? styles.iconCyan : styles.iconPurple}`}>
+          <Icon size={24} strokeWidth={1.5} />
         </div>
-        <Heading as="h3" style={{marginTop: '0.5rem'}}>
-          <Link to={link} className={styles.moduleLink}>
-            {title}
-          </Link>
-        </Heading>
-        <p>{description}</p>
-        <div className={styles.moduleFooter}>
-          <span>{chapters} chapters</span>
-          <Link to={link} className="button button--primary button--sm">
-            Explore
-          </Link>
+        <span className={`${styles.moduleBadge} ${isCyan ? styles.badgeCyan : styles.badgePurple}`}>
+          {blockId}
+        </span>
+      </div>
+
+      <h3 className={styles.moduleTitle}>{title}</h3>
+      <p className={styles.moduleDesc}>{description}</p>
+
+      <div className={`${styles.moduleCardFooter} ${isCyan ? styles.footerCyan : styles.footerPurple}`}>
+        <div className={styles.moduleChapters}>
+          <FooterIcon size={12} strokeWidth={2} />
+          <span>{chapters} UNITS_DEPLOYED</span>
         </div>
+        <Link to={link} className={styles.moduleExecute}>
+          EXECUTE <ChevronRight size={14} strokeWidth={2.5} />
+        </Link>
       </div>
     </div>
   );
 }
 
+// ─── Modules Section ───────────────────────────────────────────────────────
+
 function ModulesSection() {
   return (
-    <section className={styles.modules}>
-      <div className="container">
-        <Heading as="h2" className="text--center" style={{marginBottom: '2rem'}}>
-          Four Modules, One Complete Robotics Engineer
-        </Heading>
-        <div className="row">
+    <section className={styles.modulesSection}>
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <p className={styles.sectionLabel}>// CORE_MODULES</p>
+            <h2 className={styles.sectionTitle}>Integrated Pipeline</h2>
+            <p className={styles.sectionSubtitle}>
+              A multi-stage evolution from low-level sensory-motor control to
+              high-level cognitive task execution.
+            </p>
+          </div>
+          <Link to="/docs/" className={styles.viewAllLink}>
+            VIEW_FULL_GRAPH <ArrowRight size={16} strokeWidth={2} />
+          </Link>
+        </div>
+
+        <div className={styles.modulesGrid}>
           {modules.map((mod) => (
-            <ModuleCardComponent key={mod.number} {...mod} />
+            <ModuleCard key={mod.number} {...mod} />
           ))}
         </div>
       </div>
@@ -124,57 +266,77 @@ function ModulesSection() {
   );
 }
 
-function QuickLinks() {
+// ─── Quick Links Section ───────────────────────────────────────────────────
+
+function QuickLinksSection() {
+  const links = [
+    {
+      Icon: Rocket,
+      accent: 'cyan' as const,
+      title: 'Capstone Forge',
+      description: 'Apply end-to-end VLA models to a physical humanoid chassis.',
+      label: '// SYSTEM_MAP',
+      to: '/docs/capstone/overview',
+    },
+    {
+      Icon: Box,
+      accent: 'cyan' as const,
+      title: 'Hardware Matrix',
+      description: 'Optimized setup for Jetson Orin Nano and supported robot platforms.',
+      label: '// ASSET_MANIFEST',
+      to: '/docs/hardware/jetson-orin-nano',
+    },
+    {
+      Icon: Bot,
+      accent: 'purple' as const,
+      title: 'Neural Tutor',
+      description: 'RAG-enhanced AI trained on the full curriculum for technical Q&A.',
+      label: '// OPEN_LINK',
+      to: '/docs/',
+    },
+  ];
+
   return (
     <section className={styles.quickLinks}>
-      <div className="container">
-        <div className="row">
-          <div className="col col--4 text--center">
-            <Heading as="h3">Capstone Project</Heading>
-            <p>
-              Integrate all four modules to build an autonomous humanoid robot
-              with voice commands and object manipulation.
-            </p>
-            <Link to="/docs/capstone/overview" className="button button--outline button--primary">
-              View Capstone
-            </Link>
-          </div>
-          <div className="col col--4 text--center">
-            <Heading as="h3">Hardware Guides</Heading>
-            <p>
-              Setup guides for Jetson Orin Nano edge kits and supported robot
-              platforms with step-by-step instructions.
-            </p>
-            <Link to="/docs/hardware/jetson-orin-nano" className="button button--outline button--primary">
-              Hardware Setup
-            </Link>
-          </div>
-          <div className="col col--4 text--center">
-            <Heading as="h3">AI Chatbot</Heading>
-            <p>
-              Ask questions about any chapter. The AI chatbot uses RAG to
-              provide accurate answers with citations.
-            </p>
-            <Link to="/docs/" className="button button--outline button--primary">
-              Try the Chatbot
-            </Link>
-          </div>
+      <div className={styles.quickLinksDots} />
+      <div className={styles.sectionInner}>
+        <div className={styles.quickLinksGrid}>
+          {links.map(({Icon, accent, title, description, label, to}) => (
+            <div key={title} className={styles.quickLinkItem}>
+              <div className={`${styles.quickLinkIcon} ${accent === 'purple' ? styles.quickLinkIconPurple : styles.quickLinkIconCyan}`}>
+                <Icon size={32} strokeWidth={1.5} />
+              </div>
+              <h3 className={styles.quickLinkTitle}>{title}</h3>
+              <p className={styles.quickLinkDesc}>{description}</p>
+              <Link to={to} className={`${styles.quickLinkLabel} ${accent === 'purple' ? styles.quickLinkLabelPurple : ''}`}>
+                {label}
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
+// ─── Page ──────────────────────────────────────────────────────────────────
+
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  useEffect(() => {
+    document.body.classList.add('homepage-dark');
+    return () => {
+      document.body.classList.remove('homepage-dark');
+    };
+  }, []);
+
   return (
     <Layout
       title="Home"
       description="An AI-Native Textbook for Physical AI & Humanoid Robotics — ROS 2, simulation, NVIDIA Isaac, and Vision-Language-Action models.">
-      <HomepageHeader />
+      <HeroSection />
       <main>
         <ModulesSection />
-        <QuickLinks />
+        <QuickLinksSection />
       </main>
     </Layout>
   );
