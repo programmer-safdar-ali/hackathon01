@@ -1,99 +1,375 @@
 @tailwind components;
 @tailwind utilities;
 
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&family=Gruppo&display=swap');
 
-/* You can override the default Infima variables here. */
+/* ═══════════════════════════════════════════════════════════════
+   Site-wide design tokens
+   ═══════════════════════════════════════════════════════════════ */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --site-amber:      #F97316;
+  --site-amber-dim:  rgba(249, 115, 22, 0.12);
+  --site-bg:         #06090D;
+  --site-bg-2:       #090E14;
+  --site-bg-card:    #0C1420;
+  --site-border:     rgba(249, 115, 22, 0.1);
+  --site-text:       #D4DCE8;
+  --site-text-muted: #5A7080;
+  --site-text-dim:   #2E4050;
+
+  /* Infima primary — amber/orange */
+  --ifm-color-primary:          #ea6c00;
+  --ifm-color-primary-dark:     #d26100;
+  --ifm-color-primary-darker:   #c75c00;
+  --ifm-color-primary-darkest:  #a34b00;
+  --ifm-color-primary-light:    #f97316;
+  --ifm-color-primary-lighter:  #fb8c2a;
+  --ifm-color-primary-lightest: #fda043;
+  --ifm-code-font-size: 93%;
+  --docusaurus-highlighted-code-line-bg: rgba(249, 115, 22, 0.08);
+  --ifm-font-family-monospace: 'IBM Plex Mono', 'SFMono-Regular', monospace;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary:          #f97316;
+  --ifm-color-primary-dark:     #ea6c00;
+  --ifm-color-primary-darker:   #d26100;
+  --ifm-color-primary-darkest:  #a34b00;
+  --ifm-color-primary-light:    #fb923c;
+  --ifm-color-primary-lighter:  #fdba74;
+  --ifm-color-primary-lightest: #fed7aa;
+  --docusaurus-highlighted-code-line-bg: rgba(249, 115, 22, 0.12);
+  --ifm-background-color: var(--site-bg);
+  --ifm-background-surface-color: var(--site-bg-card);
 }
 
-/* ── Global heading font ── */
+/* ── Global typography ── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', var(--ifm-font-family-base);
-  letter-spacing: -0.02em;
+  font-family: 'Syne', var(--ifm-font-family-base);
+  letter-spacing: -0.015em;
+}
+
+code, kbd, pre, samp {
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Homepage Dark Theme — activated by body.homepage-dark
+   NAVBAR — Global amber industrial theme (all pages)
    ═══════════════════════════════════════════════════════════════ */
 
-/* Navbar — glassmorphism dark */
-body.homepage-dark .navbar {
-  background: rgba(2, 6, 23, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: none;
+.navbar {
+  background: rgba(6, 9, 13, 0.97) !important;
+  border-bottom: 1px solid rgba(249, 115, 22, 0.12) !important;
+  box-shadow: 0 1px 0 rgba(249, 115, 22, 0.06) !important;
+  padding: 0 1.5rem;
 }
 
-body.homepage-dark .navbar__title {
-  color: #f8fafc;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+/* Amber left strip on navbar */
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--site-amber) 0%,
+    rgba(249, 115, 22, 0.2) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
-body.homepage-dark .navbar__link {
-  color: #94a3b8;
+.navbar__title {
+  color: #EDF2F7 !important;
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 1.05rem !important;
+  letter-spacing: -0.01em !important;
 }
 
-body.homepage-dark .navbar__link:hover,
-body.homepage-dark .navbar__link--active {
-  color: #00d9ff;
+/* Amber accent before title */
+.navbar__brand::before {
+  content: '//';
+  color: var(--site-amber);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  opacity: 0.7;
 }
 
-body.homepage-dark .navbar__logo img {
-  filter: brightness(0) invert(1);
+.navbar__logo {
+  margin-right: 0.25rem;
 }
 
-/* Footer — deep dark */
-body.homepage-dark .footer {
-  background: #010409;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+.navbar__logo img {
+  filter: brightness(0) invert(1) !important;
 }
 
-body.homepage-dark .footer__title {
-  color: #f8fafc;
+/* ── Bitcount Grid Double terminal animation on navbar title ── */
+.navbar__title {
+  font-family: 'Bitcount Grid Double', monospace !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.04em !important;
+  color: #EDF2F7 !important;
+  animation: navbarTitlePulse 5s ease-in-out infinite !important;
 }
 
-body.homepage-dark .footer__link-item {
-  color: #64748b;
+@keyframes navbarTitlePulse {
+  0%   { font-variation-settings: 'wght' 500; opacity: 0.85; }
+  30%  { font-variation-settings: 'wght' 650; opacity: 1;    }
+  60%  { font-variation-settings: 'wght' 450; opacity: 0.9;  }
+  100% { font-variation-settings: 'wght' 500; opacity: 0.85; }
 }
 
-body.homepage-dark .footer__link-item:hover {
-  color: #00d9ff;
+.navbar__link {
+  color: #5A7080 !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  transition: color 0.2s ease !important;
+  position: relative;
 }
 
-body.homepage-dark .footer__copyright {
-  color: #334155;
+.navbar__link:hover {
+  color: #D4DCE8 !important;
 }
 
-/* Main wrapper background */
+.navbar__link--active {
+  color: var(--site-amber) !important;
+}
+
+/* Amber underline for active link */
+.navbar__link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--site-amber);
+}
+
+/* Search bar */
+.navbar__search-input {
+  background: rgba(249, 115, 22, 0.05) !important;
+  border: 1px solid rgba(249, 115, 22, 0.15) !important;
+  color: #D4DCE8 !important;
+  border-radius: 3px !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 0.8rem !important;
+}
+
+.navbar__search-input::placeholder {
+  color: var(--site-text-muted) !important;
+}
+
+/* GitHub icon button */
+.navbar__item.navbar__link[href*='github'] {
+  color: #3d5060 !important;
+  transition: color 0.2s ease !important;
+}
+
+.navbar__item.navbar__link[href*='github']:hover {
+  color: var(--site-amber) !important;
+}
+
+/* Mobile hamburger */
+.navbar__toggle {
+  color: #5A7080 !important;
+}
+
+/* Mobile sidebar */
+.navbar-sidebar {
+  background: #06090D !important;
+  border-right: 1px solid rgba(249, 115, 22, 0.1) !important;
+}
+
+.navbar-sidebar__brand {
+  border-bottom: 1px solid rgba(249, 115, 22, 0.08) !important;
+  background: transparent !important;
+}
+
+.navbar-sidebar__close {
+  color: #5A7080 !important;
+}
+
+.navbar-sidebar__items .navbar__link {
+  color: #5A7080 !important;
+  padding: 0.75rem 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+.navbar-sidebar__items .navbar__link:hover,
+.navbar-sidebar__items .navbar__link--active {
+  color: var(--site-amber) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER — Global amber industrial theme
+   ═══════════════════════════════════════════════════════════════ */
+
+.footer {
+  background: #040608 !important;
+  border-top: 1px solid rgba(249, 115, 22, 0.1) !important;
+  padding: 4rem 0 2rem !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle amber grid in footer */
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(249, 115, 22, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 115, 22, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+
+.footer__links {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 3rem !important;
+  padding-bottom: 3rem !important;
+  border-bottom: 1px solid rgba(249, 115, 22, 0.07) !important;
+}
+
+.footer__col {
+  border-left: 2px solid rgba(249, 115, 22, 0.12);
+  padding-left: 1.5rem !important;
+  margin-bottom: 2rem;
+}
+
+.footer__col:first-child {
+  border-left-color: rgba(249, 115, 22, 0.5);
+}
+
+.footer__title {
+  color: var(--site-amber) !important;
+  font-family: 'Bitcount Grid Double', monospace !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 1.25rem !important;
+  animation: footerTitleFlicker 8s ease-in-out infinite !important;
+}
+
+@keyframes footerTitleFlicker {
+  0%   { font-variation-settings: 'wght' 400; opacity: 0.7;  }
+  10%  { font-variation-settings: 'wght' 600; opacity: 1;    }
+  12%  { font-variation-settings: 'wght' 300; opacity: 0.5;  }
+  14%  { font-variation-settings: 'wght' 600; opacity: 1;    }
+  50%  { font-variation-settings: 'wght' 500; opacity: 0.85; }
+  80%  { font-variation-settings: 'wght' 400; opacity: 0.75; }
+  100% { font-variation-settings: 'wght' 400; opacity: 0.7;  }
+}
+
+/* Footer copyright uses Bitcount Grid Double too */
+.footer__copyright {
+  color: #1e2d3a !important;
+  font-family: 'Bitcount Grid Double', monospace !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.06em !important;
+  font-variation-settings: 'wght' 300 !important;
+}
+
+.footer__item {
+  margin-bottom: 0.625rem !important;
+}
+
+.footer__link-item {
+  color: #2E4050 !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  transition: color 0.2s ease !important;
+  text-decoration: none !important;
+}
+
+.footer__link-item:hover {
+  color: var(--site-amber) !important;
+  text-decoration: none !important;
+}
+
+.footer__bottom {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer__copyright {
+  color: #1e2d3a !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* Footer logo area */
+.footer__logo {
+  filter: brightness(0) invert(0.15) !important;
+  max-width: 120px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DOCS / SIDEBAR — Global amber theming
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Sidebar */
+.menu__list-item-collapsible,
+.menu__link {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  color: var(--site-amber) !important;
+  background: rgba(249, 115, 22, 0.06) !important;
+  border-left: 2px solid var(--site-amber);
+}
+
+/* Doc page headings */
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Table of contents */
+.table-of-contents__link {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  color: var(--site-text-muted);
+}
+
+.table-of-contents__link--active,
+.table-of-contents__link:hover {
+  color: var(--site-amber) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Homepage Dark Theme — body.homepage-dark overrides
+   ═══════════════════════════════════════════════════════════════ */
+
 body.homepage-dark .main-wrapper {
-  background: #020617;
+  background: var(--site-bg);
+}
+
+/* Ensure navbar is fully opaque on scroll on homepage */
+body.homepage-dark .navbar {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }

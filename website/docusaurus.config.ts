@@ -36,7 +36,20 @@ const config: Config = {
       crossorigin: 'anonymous',
     },
     {
-      href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap',
+      type: 'text/css',
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.googleapis.com',
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.gstatic.com',
+      crossorigin: 'anonymous',
+    },
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&family=Gruppo&display=swap',
       type: 'text/css',
     },
   ],
@@ -82,7 +95,9 @@ const config: Config = {
   themeConfig: {
     image: 'img/social-card.png',
     colorMode: {
-      respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'Physical AI Textbook',
@@ -134,10 +149,10 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Physical AI & Humanoid Robotics Textbook. Built with Docusaurus.`,
+      copyright: `© ${new Date().getFullYear()} PHYSICAL AI & HUMANOID ROBOTICS TEXTBOOK // PROTOCOL v2025 // BUILT WITH DOCUSAURUS`,
     },
     prism: {
-      theme: prismThemes.github,
+      theme: prismThemes.dracula,
       darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'python', 'yaml', 'markup', 'json'],
     },
