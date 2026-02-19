@@ -140,12 +140,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T064 [P] [US3] Create website/src/components/KnowledgeCheck/index.tsx — React component accepting quiz data (questions, options, correct answers, explanations), rendering multiple-choice questions, handling answer selection, showing immediate feedback per question, and summary score at completion (e.g., "7/10 correct")
-- [ ] T065 [P] [US3] Create quiz data for Module 1 chapters: add knowledge check sections with 5-10 questions each at the end of website/docs/module-1-ros2/01-ros2-architecture.mdx through 05-urdf-transforms.mdx using MDX import of KnowledgeCheck component
-- [ ] T066 [P] [US3] Create quiz data for Module 2 chapters: add knowledge check sections at the end of website/docs/module-2-simulation/01-gazebo-basics.mdx through 04-digital-twin-pipeline.mdx
-- [ ] T067 [P] [US3] Create quiz data for Module 3 chapters: add knowledge check sections at the end of website/docs/module-3-isaac/01-isaac-sdk-setup.mdx through 04-sim-to-real.mdx
-- [ ] T068 [P] [US3] Create quiz data for Module 4 chapters: add knowledge check sections at the end of website/docs/module-4-vla/01-conversational-robotics.mdx through 04-vla-integration.mdx
-- [ ] T069 [US3] Add "review sections for missed questions" links in KnowledgeCheck score summary — each incorrect answer links back to the relevant chapter section anchor
+- [x] T064 [P] [US3] Create website/src/components/KnowledgeCheck/index.tsx — React component accepting quiz data (questions, options, correct answers, explanations), rendering multiple-choice questions, handling answer selection, showing immediate feedback per question, and summary score at completion (e.g., "7/10 correct")
+- [x] T065 [P] [US3] Create quiz data for Module 1 chapters: add knowledge check sections with 5-10 questions each at the end of website/docs/module-1-ros2/01-ros2-architecture.mdx through 05-urdf-transforms.mdx using MDX import of KnowledgeCheck component
+- [x] T066 [P] [US3] Create quiz data for Module 2 chapters: add knowledge check sections at the end of website/docs/module-2-simulation/01-gazebo-basics.mdx through 04-digital-twin-pipeline.mdx
+- [x] T067 [P] [US3] Create quiz data for Module 3 chapters: add knowledge check sections at the end of website/docs/module-3-isaac/01-isaac-sdk-setup.mdx through 04-sim-to-real.mdx
+- [x] T068 [P] [US3] Create quiz data for Module 4 chapters: add knowledge check sections at the end of website/docs/module-4-vla/01-conversational-robotics.mdx through 04-vla-integration.mdx
+- [x] T069 [US3] Add "review sections for missed questions" links in KnowledgeCheck score summary — each incorrect answer links back to the relevant chapter section anchor
 
 **Checkpoint**: User Story 3 complete. Every chapter has a Knowledge Check with 5-10 questions. Scoring works client-side. Feedback shown per question. Review links for missed answers.
 
@@ -242,10 +242,10 @@
 - [ ] T102 Run WCAG 2.1 AA accessibility audit on all pages: verify alt text on diagrams, keyboard navigation, color contrast, screen reader compatibility per FR-018 and SC-006
 - [ ] T103 Optimize page load performance: verify initial page load < 3s (SC-005), lazy-load ChatbotWidget, optimize image assets in website/static/img/
 - [ ] T104 Verify chatbot p95 latency < 2s under normal load (SC-004) using the 100-question test set (SC-003). Document accuracy results
-- [ ] T105 Create backend/app/models/__init__.py and backend/app/services/__init__.py and backend/app/api/__init__.py ensuring all Python packages are properly initialized
+- [x] T105 Create backend/app/models/__init__.py and backend/app/services/__init__.py and backend/app/api/__init__.py ensuring all Python packages are properly initialized
 - [ ] T106 Create FR-020 deployment documentation: update quickstart.md with final deployment procedures, environment variable reference, and maintenance operations
 - [ ] T107 Record demo video (< 90 seconds per SC-011): showcase textbook navigation across modules, chatbot Q&A interaction with citation, and one knowledge check assessment
-- [ ] T108 Final build validation: run `npm run build` in website/ (< 5 min), run `pytest` in backend/ (all pass), verify deployed site at GitHub Pages URL and API at Vercel URL
+- [x] T108 Final build validation: run `npm run build` in website/ (< 5 min), run `pytest` in backend/ (all pass), verify deployed site at GitHub Pages URL and API at Vercel URL
 
 **Checkpoint**: All user stories polished. CI/CD pipelines active. Accessibility and performance targets met. Demo video recorded. Deployment verified.
 
