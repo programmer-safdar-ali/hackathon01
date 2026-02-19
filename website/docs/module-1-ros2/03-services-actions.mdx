@@ -3,6 +3,8 @@ sidebar_position: 3
 title: "Services & Actions"
 description: "Master ROS 2 services for request-response communication and actions for long-running tasks with feedback, cancellation, and goal management."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Services & Actions
 
@@ -986,3 +988,83 @@ In the next chapter, we will learn how to package all of these nodes, services, 
 4. **Service + Action Composition**: Build a system where an action server (performing a patrol route) calls a service (to check battery level) before each waypoint. If the battery is below 20%, the action aborts gracefully with an appropriate result message.
 
 5. **Timeout Testing**: Start a service client without the server running. Verify that your timeout logic detects the missing server within 5 seconds. Then start the server and verify the retry logic succeeds.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Services & Actions"
+  questions={[
+    {
+      id: 1,
+      question: "When should you use a ROS 2 service instead of a topic?",
+      options: [
+        "For high-frequency sensor data delivered to all subscribers",
+        "For discrete request-response operations where you need a single answer (e.g., calibrate sensor)",
+        "For broadcasting robot state to multiple nodes simultaneously",
+        "For streaming video at 30 fps"
+      ],
+      correctIndex: 1,
+      explanation: "Services are ideal for discrete operations where one caller needs one reply — calibration, coordinate transforms, database queries. Topics are better for continuous streams. Services block the caller until the response arrives.",
+      sectionRef: "#when-to-use-services-vs-topics",
+      sectionLabel: "When to Use Services vs Topics"
+    },
+    {
+      id: 2,
+      question: "What are the three message components of a ROS 2 action?",
+      options: [
+        "Request, Response, Error",
+        "Goal, Feedback, Result",
+        "Start, Progress, End",
+        "Command, Status, Acknowledgement"
+      ],
+      correctIndex: 1,
+      explanation: "An action has three message types: Goal (sent by client to start the task), Feedback (sent periodically by server during execution), and Result (sent when the task completes or fails). This enables monitoring long-running tasks.",
+      sectionRef: "#action-message-types",
+      sectionLabel: "Action Message Types"
+    },
+    {
+      id: 3,
+      question: "What happens if a service client calls a service but the server is not running?",
+      options: [
+        "The client automatically retries every second until the server starts",
+        "ROS 2 queues the request and delivers it when the server comes online",
+        "The call blocks indefinitely (or raises an exception if using wait_for_service with a timeout)",
+        "The client receives an empty response with error fields"
+      ],
+      correctIndex: 2,
+      explanation: "Service clients block waiting for a response. Without a running server, the call hangs forever. Best practice: always use `wait_for_service(timeout_sec=N)` before calling.",
+      sectionRef: "#service-client-implementation",
+      sectionLabel: "Service Client Implementation"
+    },
+    {
+      id: 4,
+      question: "How can an action client cancel a long-running action already in progress?",
+      options: [
+        "By killing the action server process",
+        "By calling `goal_handle.cancel_goal()` — the server receives a cancel request and stops gracefully",
+        "By unsubscribing from the feedback topic",
+        "Actions cannot be cancelled once started"
+      ],
+      correctIndex: 1,
+      explanation: "The action client calls `cancel_goal()` on the goal handle. The server checks `goal_handle.is_cancel_requested` in its execute callback and stops cleanly, returning a partial or error result.",
+      sectionRef: "#action-cancellation",
+      sectionLabel: "Action Cancellation"
+    },
+    {
+      id: 5,
+      question: "What makes actions preferable to services for robot navigation tasks?",
+      options: [
+        "Actions are faster because they use UDP instead of TCP",
+        "Actions support preemption, feedback, and cancellation — you can monitor progress and stop mid-task",
+        "Actions work offline without a network connection",
+        "Actions automatically retry if the robot fails to reach the goal"
+      ],
+      correctIndex: 1,
+      explanation: "Navigation can take seconds or minutes. Actions provide continuous feedback (current position, ETA) and allow cancellation. A service would block the caller until arrival with no feedback and no way to interrupt.",
+      sectionRef: "#when-to-use-actions",
+      sectionLabel: "When to Use Actions"
+    }
+  ]}
+/>

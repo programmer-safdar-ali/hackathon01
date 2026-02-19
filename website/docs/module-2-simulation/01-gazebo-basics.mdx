@@ -3,6 +3,8 @@ sidebar_position: 1
 title: "Gazebo Basics"
 description: "Introduction to Gazebo Fortress simulation environment for robotics development and testing."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Gazebo Basics
 
@@ -596,3 +598,83 @@ In this chapter you learned:
 - Programmatic simulation control using Python.
 
 In the next chapter, we will dive into configuring physics engines and adding realistic sensors to your simulated robots.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Gazebo Basics"
+  questions={[
+    {
+      id: 1,
+      question: "What is the primary file format used to describe simulation worlds and models in Gazebo Fortress?",
+      options: [
+        "URDF (Unified Robot Description Format)",
+        "SDF (Simulation Description Format)",
+        "YAML configuration files",
+        "JSON world descriptors"
+      ],
+      correctIndex: 1,
+      explanation: "Gazebo Fortress uses SDF (Simulation Description Format) as its native world and model description format. While URDF describes robots for ROS 2, SDF is more expressive — it supports world properties (gravity, physics engine), multiple models, lights, and advanced sensor plugins.",
+      sectionRef: "#world-files-and-sdf-format",
+      sectionLabel: "World Files and SDF Format"
+    },
+    {
+      id: 2,
+      question: "How does Gazebo Fortress communicate with ROS 2 for exchanging sensor data and commands?",
+      options: [
+        "Directly through shared memory between processes",
+        "Via the ros_gz_bridge package that translates between Gazebo Transport topics and ROS 2 topics",
+        "Through a REST API that Gazebo exposes on port 8080",
+        "Using ROS 1 as an intermediary bridge layer"
+      ],
+      correctIndex: 1,
+      explanation: "ros_gz_bridge (formerly ros_ign_bridge) translates messages between Gazebo's internal transport layer and ROS 2 topics. You configure parameter bridges specifying which Gazebo topics to expose as ROS 2 topics and their directions.",
+      sectionRef: "#ros-gazebo-bridge",
+      sectionLabel: "ROS-Gazebo Bridge"
+    },
+    {
+      id: 3,
+      question: "What ROS 2 command spawns a robot model (URDF/SDF) into a running Gazebo simulation?",
+      options: [
+        "`ros2 run gazebo_ros spawn_model`",
+        "`ros2 run ros_gz_sim create` with `-file` or `-string` arguments",
+        "`gz model --spawn-file`",
+        "`ros2 service call /spawn_entity`"
+      ],
+      correctIndex: 1,
+      explanation: "`ros2 run ros_gz_sim create` is the standard way to spawn models in Gazebo Fortress from ROS 2. You specify the SDF/URDF file path with `-file` or pass the content as a string with `-string`, along with position arguments.",
+      sectionRef: "#spawning-models",
+      sectionLabel: "Spawning Models"
+    },
+    {
+      id: 4,
+      question: "What is the purpose of a Gazebo plugin in an SDF model file?",
+      options: [
+        "Plugins define the visual mesh for the robot's 3D appearance",
+        "Plugins extend Gazebo with custom behavior — sensors, controllers, ROS 2 bridges — that the base simulator does not provide",
+        "Plugins set the physics engine parameters like gravity and step size",
+        "Plugins define collision geometries for physics simulation"
+      ],
+      correctIndex: 1,
+      explanation: "Plugins are shared libraries that extend Gazebo. The `gz-sim-ros2-control-system` plugin connects Gazebo joints to ROS 2 control. Sensor plugins (camera, lidar, IMU) publish simulated sensor data to Gazebo transport topics that the bridge then exposes to ROS 2.",
+      sectionRef: "#gazebo-plugins",
+      sectionLabel: "Gazebo Plugins"
+    },
+    {
+      id: 5,
+      question: "What does the Gazebo GUI pause button do, and why is it useful during development?",
+      options: [
+        "It stops all ROS 2 nodes connected to Gazebo",
+        "It freezes simulation time, allowing you to inspect robot state without the world progressing",
+        "It saves a snapshot of the current world state to disk",
+        "It reduces simulation speed to 0.1x real-time for detailed observation"
+      ],
+      correctIndex: 1,
+      explanation: "Pausing simulation freezes sim time while keeping the GUI interactive. This lets you inspect the robot's exact pose, joint states, and sensor readings at a specific instant — invaluable for debugging unexpected behavior or validating initial conditions.",
+      sectionRef: "#simulation-control",
+      sectionLabel: "Simulation Control"
+    }
+  ]}
+/>

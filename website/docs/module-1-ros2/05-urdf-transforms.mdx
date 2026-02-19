@@ -3,6 +3,8 @@ sidebar_position: 5
 title: "URDF & Transforms"
 description: "Learn the Unified Robot Description Format (URDF) for defining robot morphology, and master the TF2 transform system for tracking coordinate frames in ROS 2."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # URDF & Transforms
 
@@ -1052,3 +1054,83 @@ In the next chapter, we will use these URDF skills to describe a full humanoid r
    - Write a Python node that logs the end-effector position at 10 Hz.
 
 5. **Static Transform Challenge**: Write a node that publishes static transforms for three sensors on the humanoid head: a front-facing RGB camera, a downward-facing depth camera, and an IMU. Verify all three frames appear in the TF tree.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="URDF & Transforms"
+  questions={[
+    {
+      id: 1,
+      question: "In a URDF file, what is the structural relationship between `<link>` and `<joint>` elements?",
+      options: [
+        "Joints define physics properties; links define kinematics",
+        "Links are rigid bodies; joints connect two links (parent → child), defining relative motion",
+        "Each joint must contain exactly one link",
+        "Links and joints are interchangeable root elements"
+      ],
+      correctIndex: 1,
+      explanation: "A URDF is a kinematic tree. Links are rigid bodies (with geometry and inertia). Joints connect a parent link to a child link, specifying the type of motion (fixed, revolute, prismatic, continuous) and its axis and limits.",
+      sectionRef: "#urdf-structure",
+      sectionLabel: "URDF Structure"
+    },
+    {
+      id: 2,
+      question: "What is the difference between `revolute` and `continuous` joint types in URDF?",
+      options: [
+        "Revolute joints rotate; continuous joints translate",
+        "Both rotate, but revolute joints have defined angle limits; continuous joints have no limits (e.g., wheels)",
+        "Continuous joints can move in multiple axes; revolute joints are single-axis only",
+        "Revolute joints are for simulation only; continuous joints work on real hardware"
+      ],
+      correctIndex: 1,
+      explanation: "Both joint types rotate around an axis. Revolute joints have <limit lower='...' upper='...'> attributes. Continuous joints have no limits — ideal for wheels that spin indefinitely. Using revolute for a wheel causes simulation issues when the joint exceeds its limits.",
+      sectionRef: "#joint-types",
+      sectionLabel: "Joint Types"
+    },
+    {
+      id: 3,
+      question: "What does `robot_state_publisher` use the URDF for in a running ROS 2 system?",
+      options: [
+        "It uses URDF to control motors based on joint angle commands",
+        "It reads /joint_states and publishes all coordinate frame transforms to /tf using the URDF kinematic model",
+        "It renders the robot in RViz directly",
+        "It validates that sensor data matches the physical configuration"
+      ],
+      correctIndex: 1,
+      explanation: "robot_state_publisher takes the URDF and subscribes to /joint_states. It computes forward kinematics for every link and publishes resulting transforms to /tf, making any frame-to-frame transform available system-wide.",
+      sectionRef: "#robot-state-publisher",
+      sectionLabel: "Robot State Publisher"
+    },
+    {
+      id: 4,
+      question: "What does `lookupTransform('target_frame', 'source_frame', time)` return?",
+      options: [
+        "The velocity of the source frame relative to the target frame",
+        "The transformation (translation + rotation) that converts a point from source_frame to target_frame coordinates",
+        "The path of transforms connecting the two frames in the TF tree",
+        "The timestamp of the most recent transform broadcast"
+      ],
+      correctIndex: 1,
+      explanation: "lookupTransform returns a TransformStamped with translation (x,y,z) and rotation (quaternion) mapping a point from source_frame to target_frame. This is the core operation for sensor fusion — e.g., 'where is the camera point in the robot base frame?'",
+      sectionRef: "#using-tf2-in-python",
+      sectionLabel: "Using TF2 in Python"
+    },
+    {
+      id: 5,
+      question: "Why are quaternions used for rotations in TF2 instead of Euler angles?",
+      options: [
+        "Quaternions require less storage (3 values vs 4)",
+        "Quaternions avoid gimbal lock — the singularity where Euler angles lose a degree of freedom",
+        "Euler angles cannot represent 3D rotations",
+        "Quaternions are easier to visualize in RViz"
+      ],
+      correctIndex: 1,
+      explanation: "Gimbal lock occurs when two Euler angle axes align, causing undefined behavior. Quaternions represent rotations on the unit sphere — they interpolate smoothly (SLERP) and compose without singularities, making them standard for robotics.",
+      sectionRef: "#quaternions-and-rotation",
+      sectionLabel: "Quaternions and Rotation"
+    }
+  ]}
+/>

@@ -3,6 +3,8 @@ sidebar_position: 4
 title: "Digital Twin Pipeline"
 description: "Build an end-to-end digital twin pipeline connecting physical robots to their simulation mirrors using ROS 2, Gazebo, and Unity."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Digital Twin Pipeline
 
@@ -980,3 +982,83 @@ In the next chapter, we will explore how to integrate NVIDIA Isaac Sim for high-
 4. **Fault Injection**: Modify the state synchronization node to inject a simulated fault (gradually increasing bias on one joint encoder). Implement a simple threshold-based anomaly detector that raises a ROS 2 diagnostic warning when the bias exceeds 0.1 radians. Test that the warning fires within 5 seconds of fault onset.
 
 5. **Bridge Performance**: Measure the end-to-end latency of your digital twin pipeline by timestamping a joint command at the publisher and measuring the time until the corresponding state update arrives at the subscriber. Plot a histogram of latencies over 1000 samples and identify any outliers. What QoS settings minimize the p95 latency?
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Digital Twin Pipeline"
+  questions={[
+    {
+      id: 1,
+      question: "What is a digital twin in the context of robotics?",
+      options: [
+        "A backup copy of the robot's software running on a secondary computer",
+        "A real-time synchronized virtual model of the physical robot that mirrors its state and can predict future behavior",
+        "A 3D CAD model of the robot used for mechanical design",
+        "A duplicate robot used for testing destructive procedures"
+      ],
+      correctIndex: 1,
+      explanation: "A digital twin is a live virtual replica synchronized with the physical system. It reflects the real robot's current joint angles, sensor readings, and operational status in real time, enabling monitoring, predictive maintenance, and safe planning of future actions without risking the physical asset.",
+      sectionRef: "#digital-twin-concept",
+      sectionLabel: "Digital Twin Concept"
+    },
+    {
+      id: 2,
+      question: "What is the key challenge in maintaining real-time synchronization between a physical robot and its digital twin?",
+      options: [
+        "The physical robot generates too much data for any network to handle",
+        "Latency between real sensor readings and the virtual model must be minimized; state drift accumulates if updates are missed or delayed",
+        "Digital twins require a separate ROS 2 instance that conflicts with the robot's control system",
+        "Physical robots cannot publish their joint states to ROS 2 topics"
+      ],
+      correctIndex: 1,
+      explanation: "Any delay between a physical event and its reflection in the digital twin reduces its accuracy. State drift accumulates over time if updates are delayed or lost. The synchronization system must handle network latency, packet loss, and timing jitter while maintaining <100ms sync lag for real-time applications.",
+      sectionRef: "#state-synchronization",
+      sectionLabel: "State Synchronization"
+    },
+    {
+      id: 3,
+      question: "In a digital twin pipeline, what does the 'shadow mode' testing pattern enable?",
+      options: [
+        "It hides the digital twin from network monitoring for security",
+        "New control algorithms run in parallel on the digital twin without affecting the real robot, validating them safely before deployment",
+        "The physical robot operates in darkness without visual sensors",
+        "Shadow mode reduces simulation step size to improve physics accuracy"
+      ],
+      correctIndex: 1,
+      explanation: "Shadow mode runs new algorithms on the digital twin in parallel with the running physical robot. The algorithm receives real sensor data and produces outputs — but those outputs are only logged, not sent to the physical robot. Developers can validate real-world performance safely before switching the algorithm live.",
+      sectionRef: "#shadow-mode-testing",
+      sectionLabel: "Shadow Mode Testing"
+    },
+    {
+      id: 4,
+      question: "What role does anomaly detection play in a production digital twin system?",
+      options: [
+        "It detects when the simulation physics engine produces invalid results",
+        "It compares expected state (from the model) with actual state (from sensors) to flag divergence that indicates hardware faults or unexpected behavior",
+        "It monitors CPU and memory usage on the robot's onboard computer",
+        "It detects when the digital twin has lost network synchronization"
+      ],
+      correctIndex: 1,
+      explanation: "The digital twin maintains a predictive model of what the robot should do. When real sensor readings diverge from predictions — e.g., a joint reports different torque than expected — the anomaly detector flags this as a potential fault. Early detection prevents minor issues from becoming catastrophic failures.",
+      sectionRef: "#anomaly-detection",
+      sectionLabel: "Anomaly Detection"
+    },
+    {
+      id: 5,
+      question: "What is the benefit of using a message broker (like Apache Kafka) in a large-scale digital twin deployment?",
+      options: [
+        "Message brokers compress sensor data to reduce storage requirements",
+        "They provide durable, scalable buffering of high-velocity sensor streams — decoupling producers from consumers and enabling replay for debugging",
+        "Message brokers replace ROS 2 topics for all robot communication",
+        "They automatically create digital twin models from sensor data using machine learning"
+      ],
+      correctIndex: 1,
+      explanation: "At scale, a robot can generate millions of messages per hour. A message broker decouples sensors (producers) from analytics and twin-update consumers, provides durable storage for replay and debugging, and handles backpressure when consumers are slower than producers.",
+      sectionRef: "#scalable-data-ingestion",
+      sectionLabel: "Scalable Data Ingestion"
+    }
+  ]}
+/>

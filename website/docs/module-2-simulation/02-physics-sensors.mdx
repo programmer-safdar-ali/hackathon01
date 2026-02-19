@@ -3,6 +3,8 @@ sidebar_position: 2
 title: "Physics & Sensors"
 description: "Configure physics engines (DART, Bullet) for realistic dynamics and add sensor plugins (camera, lidar, IMU, contact) to your simulated humanoid robot."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Physics & Sensors
 
@@ -1046,3 +1048,83 @@ In the next chapter, we will explore **Unity Visualization** for creating photor
 4. **IMU State Estimation**: Write a Python node that subscribes to the IMU topic and implements a complementary filter to estimate the robot's roll and pitch angles. Compare the filter output with the ground-truth orientation from Gazebo (available via `/tf`).
 
 5. **Sensor Suite Integration**: Add all four sensor types (camera, lidar, IMU, contact) to a single robot model. Write a launch file that starts Gazebo, the bridge, and a sensor monitoring node. Verify in RViz that all sensor data is visible and correctly aligned with the robot model.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Physics & Sensors"
+  questions={[
+    {
+      id: 1,
+      question: "What does the physics engine step size (max_step_size) in Gazebo control, and what is the tradeoff?",
+      options: [
+        "It controls the render frame rate — smaller steps give smoother graphics",
+        "It controls simulation accuracy and performance — smaller steps are more accurate but slower to compute",
+        "It sets the maximum velocity any object can reach in the simulation",
+        "It determines how often Gazebo saves world state to disk"
+      ],
+      correctIndex: 1,
+      explanation: "The step size sets how much simulation time advances per physics iteration. Smaller steps (e.g., 0.001s) give more accurate physics for fast dynamics like contact forces, but require more CPU. Larger steps are faster but can cause instability with stiff joints or high-speed collisions.",
+      sectionRef: "#physics-engine-configuration",
+      sectionLabel: "Physics Engine Configuration"
+    },
+    {
+      id: 2,
+      question: "What is the primary difference between a camera sensor plugin outputting to Gazebo transport and one that outputs to ROS 2 topics directly?",
+      options: [
+        "Direct ROS 2 output is deprecated; Gazebo transport is the only correct approach",
+        "Gazebo transport keeps the simulator decoupled from ROS 2; a bridge translates selectively — better for performance when not all data is needed in ROS 2",
+        "Direct ROS 2 output compresses images automatically; Gazebo transport does not",
+        "There is no meaningful difference — they produce identical results"
+      ],
+      correctIndex: 1,
+      explanation: "Publishing to Gazebo transport and then bridging only required topics to ROS 2 reduces overhead. Not all sensor data needs to cross the bridge — only what ROS 2 nodes consume. This decoupling also makes the simulation easier to run without a full ROS 2 stack.",
+      sectionRef: "#sensor-plugins",
+      sectionLabel: "Sensor Plugins"
+    },
+    {
+      id: 3,
+      question: "In simulated lidar data (sensor_msgs/LaserScan), what do `range_min` and `range_max` values represent?",
+      options: [
+        "The minimum and maximum angular resolution of the lidar",
+        "The minimum and maximum valid detection distances — readings outside this range are set to inf or nan",
+        "The minimum and maximum scan frequency in Hz",
+        "The signal strength thresholds for filtering noise"
+      ],
+      correctIndex: 1,
+      explanation: "range_min and range_max define the valid measurement window. Points closer than range_min or farther than range_max are reported as inf (no detection). This matches real lidar behavior and is important for filtering in algorithms like slam_toolbox or nav2 costmaps.",
+      sectionRef: "#lidar-sensor-simulation",
+      sectionLabel: "Lidar Sensor Simulation"
+    },
+    {
+      id: 4,
+      question: "What type of data does a simulated IMU (Inertial Measurement Unit) publish in ROS 2?",
+      options: [
+        "GPS coordinates and altitude",
+        "Linear acceleration (m/s²) and angular velocity (rad/s) with optional orientation estimate as a quaternion",
+        "Joint torques and contact forces",
+        "Barometric pressure and temperature"
+      ],
+      correctIndex: 1,
+      explanation: "A simulated IMU publishes sensor_msgs/Imu messages containing linear acceleration (from accelerometer), angular velocity (from gyroscope), and optionally an orientation estimate (from fusion). Gaussian noise parameters in the SDF model simulate real IMU measurement noise.",
+      sectionRef: "#imu-sensor-simulation",
+      sectionLabel: "IMU Sensor Simulation"
+    },
+    {
+      id: 5,
+      question: "Why is adding Gaussian noise to simulated sensors important for robot development?",
+      options: [
+        "Noise makes simulation more visually realistic for demos",
+        "Simulated noise forces algorithms to be robust to real-world sensor imperfections, making sim-to-real transfer more successful",
+        "Noise reduces simulation performance so developers learn to optimize their code",
+        "Gaussian noise is required by the ROS 2 sensor message format specification"
+      ],
+      correctIndex: 1,
+      explanation: "Real sensors always have noise. Algorithms trained on perfect simulated data often fail on real hardware. Adding realistic Gaussian noise to simulated sensors during development forces engineers to build robust filtering and estimation algorithms that transfer successfully to real robots.",
+      sectionRef: "#sensor-noise-modeling",
+      sectionLabel: "Sensor Noise Modeling"
+    }
+  ]}
+/>

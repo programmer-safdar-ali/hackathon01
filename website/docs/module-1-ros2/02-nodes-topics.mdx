@@ -3,6 +3,8 @@ sidebar_position: 2
 title: "Nodes & Topics"
 description: "Deep dive into ROS 2 nodes and topics: publishers, subscribers, custom messages, QoS profiles, topic remapping, and multi-node communication architectures."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Nodes & Topics
 
@@ -923,3 +925,83 @@ In the next chapter, we explore **Services and Actions** -- ROS 2's patterns for
 4. **Multi-Robot Remapping**: Using the multi-node example from Section 2.8, launch two complete sensor-processor-display pipelines in namespaces `/robot_a` and `/robot_b`. Use a launch file to configure both pipelines.
 
 5. **Throughput Benchmark**: Create a publisher that sends 1000-byte messages at increasing rates (10 Hz, 100 Hz, 1000 Hz). Write a subscriber that measures the actual received rate and reports dropped messages. Compare `RELIABLE` vs `BEST_EFFORT` QoS.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Nodes & Topics"
+  questions={[
+    {
+      id: 1,
+      question: "When a publisher uses RELIABLE QoS and a subscriber uses BEST_EFFORT QoS, what happens?",
+      options: [
+        "ROS 2 automatically negotiates a compatible QoS",
+        "The subscriber receives all messages but ignores errors",
+        "No connection is established — the subscriber receives no messages",
+        "The publisher downgrades to BEST_EFFORT to match"
+      ],
+      correctIndex: 2,
+      explanation: "QoS compatibility in ROS 2 is asymmetric. A BEST_EFFORT subscriber cannot guarantee delivery from a RELIABLE publisher. No connection is formed, resulting in zero messages received.",
+      sectionRef: "#quality-of-service-for-topics",
+      sectionLabel: "Quality of Service for Topics"
+    },
+    {
+      id: 2,
+      question: "What is the purpose of topic remapping in ROS 2?",
+      options: [
+        "It changes the data type of messages on a topic",
+        "It lets you rename topics at launch time without modifying source code",
+        "It creates a backup copy of all messages for logging",
+        "It filters messages based on a namespace prefix"
+      ],
+      correctIndex: 1,
+      explanation: "Topic remapping separates the topic name a node uses internally from the name it appears as in the system. This lets you run the same node multiple times with different names, or connect components with different naming conventions, without editing code.",
+      sectionRef: "#topic-remapping-and-namespaces",
+      sectionLabel: "Topic Remapping and Namespaces"
+    },
+    {
+      id: 3,
+      question: "What does the `depth` parameter in a QoS profile control?",
+      options: [
+        "The maximum number of subscribers that can receive messages",
+        "The number of undelivered messages to buffer before dropping the oldest",
+        "The frequency at which the publisher sends messages",
+        "The size in bytes of each individual message"
+      ],
+      correctIndex: 1,
+      explanation: "The depth parameter sets the message queue size. If a subscriber cannot process messages fast enough, the oldest are dropped to stay within the depth limit. A depth of 1 is common for real-time sensor data where only the latest reading matters.",
+      sectionRef: "#quality-of-service-for-topics",
+      sectionLabel: "Quality of Service for Topics"
+    },
+    {
+      id: 4,
+      question: "What is the `rclpy.spin()` function doing in a ROS 2 Python node?",
+      options: [
+        "It rotates the robot by spinning the base motors",
+        "It runs the node indefinitely, processing callbacks as events arrive",
+        "It publishes a heartbeat message to indicate the node is alive",
+        "It connects to the ROS master and registers the node"
+      ],
+      correctIndex: 1,
+      explanation: "`rclpy.spin(node)` starts the executor event loop, blocking indefinitely and dispatching incoming messages, timer expirations, and service calls to the appropriate callback functions.",
+      sectionRef: "#creating-a-publisher-node",
+      sectionLabel: "Creating a Publisher Node"
+    },
+    {
+      id: 5,
+      question: "How does a ROS 2 node declare itself as a subscriber to a topic?",
+      options: [
+        "By calling `ros2 topic subscribe` from the command line before starting the node",
+        "By calling `self.create_subscription(MessageType, topic, callback, qos)` in the node constructor",
+        "By registering with the topic in a configuration file",
+        "By sending a subscription request to the publisher node directly"
+      ],
+      correctIndex: 1,
+      explanation: "In rclpy, `create_subscription` registers the node as a subscriber. You provide the message type, topic name, callback function, and QoS depth. The callback is invoked automatically whenever a message arrives.",
+      sectionRef: "#creating-a-subscriber-node",
+      sectionLabel: "Creating a Subscriber Node"
+    }
+  ]}
+/>

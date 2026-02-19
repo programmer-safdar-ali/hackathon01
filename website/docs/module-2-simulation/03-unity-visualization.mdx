@@ -3,6 +3,8 @@ sidebar_position: 3
 title: "Unity Visualization"
 description: "Integrate Unity with ROS 2 for high-fidelity 3D visualization using the Unity Robotics Hub, ROS-TCP-Connector, and URDF Importer."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Unity Visualization
 
@@ -383,3 +385,83 @@ In the next chapter, we build an end-to-end **Digital Twin Pipeline** that combi
 3. **Camera Feed Dashboard**: Create a Unity UI panel that displays live camera feeds from two simulated cameras side-by-side.
 
 4. **Bidirectional Control**: Build a Unity UI with a virtual joystick that publishes `/cmd_vel` to ROS 2, controlling a simulated robot in Gazebo while visualizing its movement in Unity.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Unity Visualization"
+  questions={[
+    {
+      id: 1,
+      question: "What is the primary purpose of the ROS-TCP-Connector package in Unity?",
+      options: [
+        "It generates C# code from ROS 2 message definitions for use in Unity",
+        "It establishes a TCP connection between Unity and a ROS 2 system, enabling bidirectional message exchange",
+        "It streams Unity's camera output to ROS 2 as a sensor_msgs/Image topic",
+        "It synchronizes Unity's physics engine with Gazebo for co-simulation"
+      ],
+      correctIndex: 1,
+      explanation: "ROS-TCP-Connector provides the networking layer between Unity and ROS 2. It connects to a ROS-TCP-Endpoint server running in the ROS 2 environment, enabling Unity to subscribe to and publish ROS 2 topics using familiar C# code patterns.",
+      sectionRef: "#ros-tcp-connector-setup",
+      sectionLabel: "ROS-TCP-Connector Setup"
+    },
+    {
+      id: 2,
+      question: "What does the Unity URDF Importer do when you import a robot description?",
+      options: [
+        "It compiles the URDF into a Gazebo SDF model",
+        "It creates a Unity GameObject hierarchy matching the URDF kinematic tree, with correctly scaled meshes and articulation joints",
+        "It generates a C# script for controlling the robot",
+        "It converts the robot to a Unity NavMesh agent"
+      ],
+      correctIndex: 1,
+      explanation: "The URDF Importer reads the URDF kinematic tree and creates a Unity articulation body hierarchy. Each link becomes a GameObject with the correct mesh, and each joint becomes a Unity ArticulationBody with the appropriate joint type and axis — accurately representing the physical robot.",
+      sectionRef: "#urdf-import-process",
+      sectionLabel: "URDF Import Process"
+    },
+    {
+      id: 3,
+      question: "What advantage does Unity's physically based rendering (PBR) offer for robot simulation compared to Gazebo's default renderer?",
+      options: [
+        "PBR renders faster than Gazebo's OgreNext renderer",
+        "PBR generates photorealistic images with accurate lighting, reflections, and materials — improving the realism of synthetic training data for vision models",
+        "PBR automatically calibrates camera intrinsics to match real hardware",
+        "PBR eliminates the need for Gaussian noise in simulated camera sensors"
+      ],
+      correctIndex: 1,
+      explanation: "Unity's PBR rendering produces significantly more photorealistic images than Gazebo's default renderer. For machine learning applications — training object detection or pose estimation models — photorealistic synthetic data reduces the domain gap when deploying on real hardware.",
+      sectionRef: "#unity-rendering-advantages",
+      sectionLabel: "Unity Rendering Advantages"
+    },
+    {
+      id: 4,
+      question: "In the Unity-ROS 2 integration, what is the role of the `RosTopicPublisher` component?",
+      options: [
+        "It records all ROS 2 messages for playback in Unity",
+        "It publishes Unity data (e.g., sensor readings, control feedback) to a ROS 2 topic through the TCP bridge",
+        "It automatically creates ROS 2 topic bridges for all Unity scene objects",
+        "It visualizes ROS 2 topic data in Unity's Inspector panel"
+      ],
+      correctIndex: 1,
+      explanation: "RosTopicPublisher is a Unity C# component that serializes Unity data into ROS 2 message format and sends it through the TCP connection to the ROS-TCP-Endpoint. This enables Unity to publish robot joint states, simulated sensor data, or control outputs to ROS 2 nodes.",
+      sectionRef: "#publishing-from-unity",
+      sectionLabel: "Publishing from Unity"
+    },
+    {
+      id: 5,
+      question: "Why might you run both Gazebo (for physics) and Unity (for visualization) simultaneously in a robotics development workflow?",
+      options: [
+        "Gazebo and Unity must always run together — neither works independently",
+        "Gazebo provides accurate physics simulation while Unity provides photorealistic rendering for perception model training and operator interfaces",
+        "Unity cannot simulate physics — it must receive all physics data from Gazebo",
+        "Running both eliminates the need for real hardware testing"
+      ],
+      correctIndex: 1,
+      explanation: "This hybrid setup leverages each tool's strength: Gazebo handles physics-accurate dynamics, contact forces, and sensor simulation; Unity provides photorealistic rendering for training vision models or building operator dashboards. They communicate via ROS 2 topics bridged through the TCP connector.",
+      sectionRef: "#hybrid-simulation-architecture",
+      sectionLabel: "Hybrid Simulation Architecture"
+    }
+  ]}
+/>

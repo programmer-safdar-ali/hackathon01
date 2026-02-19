@@ -3,6 +3,8 @@ sidebar_position: 4
 title: "Python Packages"
 description: "Learn to create, build, test, and manage ROS 2 Python packages using ament_python, colcon, and setuptools."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Python Packages
 
@@ -557,3 +559,83 @@ In the next chapter, we explore **URDF and Transforms** — describing robot geo
 3. **Unit Testing**: Write four unit tests for the stability index computation. Run with `colcon test` and verify they pass.
 
 4. **Overlay Experiment**: Create two workspaces with a package of the same name but different output. Source them in different orders and observe which version runs.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Python Packages"
+  questions={[
+    {
+      id: 1,
+      question: "Which files in a ROS 2 Python package declare its dependencies and executable entry points?",
+      options: [
+        "requirements.txt",
+        "package.xml (ROS 2 metadata) and setup.py (Python metadata and entry points)",
+        "colcon.meta",
+        "CMakeLists.txt"
+      ],
+      correctIndex: 1,
+      explanation: "Both files are required. package.xml declares ROS 2 package name and dependencies. setup.py defines the Python package and — critically — the console_scripts entry points mapping command names to Python functions.",
+      sectionRef: "#package-structure",
+      sectionLabel: "Package Structure"
+    },
+    {
+      id: 2,
+      question: "Why must you re-run `colcon build` after adding a new entry point in setup.py?",
+      options: [
+        "colcon build downloads updated dependencies",
+        "Entry point scripts are generated in install/ during build — new ones do not exist until you rebuild",
+        "colcon build restarts the ROS 2 daemon to register new nodes",
+        "The Python interpreter caches old entry points and must be refreshed"
+      ],
+      correctIndex: 1,
+      explanation: "colcon generates wrapper scripts in install/ for each entry point during build. Until you rebuild, the new entry point script does not exist — `ros2 run` will fail with 'executable not found'.",
+      sectionRef: "#building-with-colcon",
+      sectionLabel: "Building with Colcon"
+    },
+    {
+      id: 3,
+      question: "What is the purpose of `ament_python` as the build type in package.xml?",
+      options: [
+        "It is a testing framework for ROS 2 Python nodes",
+        "It tells colcon to treat the package as a pure Python package, installing it via setup.py",
+        "It is a linter that enforces ROS 2 coding style",
+        "It is a message generation tool for Python"
+      ],
+      correctIndex: 1,
+      explanation: "`<build_type>ament_python</build_type>` tells colcon this is a pure Python package. colcon runs setup.py to install it into the workspace's install directory, making it importable and adding entry point executables.",
+      sectionRef: "#package-structure",
+      sectionLabel: "Package Structure"
+    },
+    {
+      id: 4,
+      question: "In a Python launch file, what does `DeclareLaunchArgument` enable?",
+      options: [
+        "It starts a node automatically when the launch file loads",
+        "It declares a parameter that can be overridden from the command line when running `ros2 launch`",
+        "It declares a ROS 2 service that the launch system provides",
+        "It sets environment variables for all nodes in the launch file"
+      ],
+      correctIndex: 1,
+      explanation: "DeclareLaunchArgument creates a named argument users can pass at launch: `ros2 launch my_pkg my_launch.py robot_name:=bolt`. LaunchConfiguration retrieves the value, enabling flexible configuration without code changes.",
+      sectionRef: "#launch-files",
+      sectionLabel: "Launch Files"
+    },
+    {
+      id: 5,
+      question: "What does sourcing `install/setup.bash` do after a colcon build?",
+      options: [
+        "It starts all built packages automatically",
+        "It adds built packages to the ROS 2 search path so `ros2 run` and imports work",
+        "It runs all unit tests in the workspace",
+        "It uploads packages to the ROS 2 package index"
+      ],
+      correctIndex: 1,
+      explanation: "Sourcing install/setup.bash overlays the workspace on the base ROS 2 installation. It updates PATH (executables), PYTHONPATH (imports), and AMENT_PREFIX_PATH. Without sourcing, your packages are invisible to ROS 2 tools.",
+      sectionRef: "#building-with-colcon",
+      sectionLabel: "Building with Colcon"
+    }
+  ]}
+/>

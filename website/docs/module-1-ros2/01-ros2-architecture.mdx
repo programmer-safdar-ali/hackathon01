@@ -3,6 +3,8 @@ sidebar_position: 1
 title: "ROS 2 Architecture"
 description: "Understand the architecture of ROS 2, its middleware layer, core abstractions, and how it differs from ROS 1."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # ROS 2 Architecture
 
@@ -436,3 +438,97 @@ In the next chapter, we will dive deep into **Nodes and Topics**, building publi
 3. **Explore DDS**: Set `RMW_IMPLEMENTATION` to different DDS vendors and observe any differences in discovery time using `ros2 topic hz`.
 
 4. **CLI Exploration**: Start the minimal node in one terminal and use `ros2 node info`, `ros2 topic list`, and `ros2 param list` in another terminal to inspect it.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="ROS 2 Architecture"
+  questions={[
+    {
+      id: 1,
+      question: "What fundamental problem with ROS 1 does DDS solve in ROS 2?",
+      options: [
+        "It replaces Python with C++ for better performance",
+        "It eliminates the single point of failure (roscore) with decentralized peer-to-peer discovery",
+        "It adds a graphical user interface to ROS",
+        "It restricts ROS to run only on Linux for stability"
+      ],
+      correctIndex: 1,
+      explanation: "ROS 1 required a central roscore process — if it crashed, the entire system failed. ROS 2 uses DDS with decentralized discovery so nodes find each other directly without a central broker.",
+      sectionRef: "#ros-2-vs-ros-1-key-differences",
+      sectionLabel: "ROS 2 vs ROS 1: Key Differences"
+    },
+    {
+      id: 2,
+      question: "Which BEST describes a ROS 2 node?",
+      options: [
+        "A hardware driver that interfaces with physical sensors",
+        "A single-purpose process in the computation graph performing one specific function",
+        "A message format that defines the structure of topic data",
+        "A configuration file that specifies robot parameters"
+      ],
+      correctIndex: 1,
+      explanation: "A ROS 2 node is a single-purpose process — one node might read a sensor, another processes data, and another commands actuators. This enables modularity and independent testing.",
+      sectionRef: "#core-abstractions",
+      sectionLabel: "Core Abstractions"
+    },
+    {
+      id: 3,
+      question: "What is the purpose of Quality of Service (QoS) policies in ROS 2?",
+      options: [
+        "They set the priority of nodes in the computation graph",
+        "They control how messages are delivered, balancing reliability vs. performance",
+        "They encrypt all messages for security purposes",
+        "They limit the maximum number of topics a node can subscribe to"
+      ],
+      correctIndex: 1,
+      explanation: "QoS policies let you tune the tradeoff between reliability (all messages delivered) and performance (low latency). For example, sensor data on Wi-Fi might use BEST_EFFORT, while safety commands use RELIABLE.",
+      sectionRef: "#quality-of-service-qos",
+      sectionLabel: "Quality of Service"
+    },
+    {
+      id: 4,
+      question: "What is the difference between a ROS 2 service and a topic?",
+      options: [
+        "Services are faster than topics for high-frequency data",
+        "Topics use DDS while services use HTTP",
+        "Services follow a request-response pattern; topics are one-directional continuous data streams",
+        "Services can only be called from the command line, not from code"
+      ],
+      correctIndex: 2,
+      explanation: "Topics are unidirectional streams (publisher → subscribers), ideal for continuous sensor data. Services are synchronous request-response pairs — one caller gets one reply — ideal for discrete operations like calibration.",
+      sectionRef: "#core-abstractions",
+      sectionLabel: "Core Abstractions"
+    },
+    {
+      id: 5,
+      question: "What does `colcon build` do in a ROS 2 workspace?",
+      options: [
+        "It downloads packages from the internet",
+        "It starts all nodes defined in the workspace",
+        "It compiles all packages in src/ and populates install/, build/, and log/ directories",
+        "It runs all unit tests across the workspace"
+      ],
+      correctIndex: 2,
+      explanation: "colcon build compiles all packages in src/. The output goes to install/ (files you source), build/ (intermediate artifacts), and log/ (build logs). After building, source install/setup.bash to use the packages.",
+      sectionRef: "#workspace-structure",
+      sectionLabel: "Workspace Structure"
+    },
+    {
+      id: 6,
+      question: "What distinguishes a Lifecycle (Managed) Node from a regular ROS 2 node?",
+      options: [
+        "Lifecycle nodes run faster because they skip initialization",
+        "Lifecycle nodes have explicit state machines (unconfigured → configured → active → finalized) for controlled startup and shutdown",
+        "Lifecycle nodes can only be used in simulation",
+        "Lifecycle nodes automatically restart if they crash"
+      ],
+      correctIndex: 1,
+      explanation: "Lifecycle nodes add a state machine with transitions (configure, activate, deactivate, cleanup, shutdown). This allows orchestration systems to bring nodes up in the correct order and shut them down safely — critical for production robots.",
+      sectionRef: "#lifecycle-managed-nodes",
+      sectionLabel: "Lifecycle (Managed) Nodes"
+    }
+  ]}
+/>
