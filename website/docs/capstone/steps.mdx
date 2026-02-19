@@ -1,0 +1,408 @@
+---
+sidebar_position: 2
+title: "Capstone: Step-by-Step Guide"
+description: "10-step implementation guide for building an autonomous humanoid robot integrating all four modules."
+---
+
+# Capstone: Step-by-Step Implementation
+
+Work through these steps in order. Each step includes a **checkpoint validation** to confirm success before continuing.
+
+---
+
+## Step 1: Set Up the ROS 2 Workspace
+
+**References**: [Module 1 Ch.4 — Python Packages](/docs/module-1-ros2/python-packages)
+
+Create the capstone workspace and package structure:
+
+```bash
+mkdir -p ~/capstone_ws/src
+cd ~/capstone_ws/src
+
+# Create the main capstone package
+ros2 pkg create --build-type ament_python capstone_robot \
+  --dependencies rclpy std_msgs geometry_msgs sensor_msgs action_msgs
+```
+
+```bash
+# Build the workspace
+cd ~/capstone_ws
+colcon build --symlink-install
+source install/setup.bash
+```
+
+**Checkpoint ✓**: `ros2 pkg list | grep capstone_robot` returns the package name.
+
+---
+
+## Step 2: Configure the Gazebo Simulation Environment
+
+**References**: [Module 2 Ch.1 — Gazebo Basics](/docs/module-2-simulation/gazebo-basics), [Module 2 Ch.2 — Physics & Sensors](/docs/module-2-simulation/physics-sensors)
+
+Create a world file with a table and graspable objects:
+
+```xml
+<!-- capstone_robot/worlds/capstone_world.sdf -->
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="capstone_world">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal></plane></geometry>
+        </collision>
+      </link>
+    </model>
+  </world>
+</sdf>
+```
+
+**Checkpoint ✓**: `gz sim capstone_world.sdf` launches without errors.
+
+---
+
+## Step 3: Load the Robot URDF and Spawn in Gazebo
+
+**References**: [Module 1 Ch.5 — URDF & Transforms](/docs/module-1-ros2/urdf-transforms)
+
+```python
+# capstone_robot/launch/spawn_robot.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import ExecuteProcess
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            parameters=[{'robot_description': open('urdf/robot.urdf').read()}]
+        ),
+        ExecuteProcess(
+            cmd=['gz', 'service', '-s', '/world/capstone_world/create',
+                 '--reqtype', 'gz.msgs.EntityFactory',
+                 '--reptype', 'gz.msgs.Boolean',
+                 '--timeout', '5000',
+                 '--req', 'sdf_filename: "urdf/robot.urdf"'],
+        ),
+    ])
+```
+
+**Checkpoint ✓**: Robot model appears in Gazebo. `ros2 topic list` shows `/joint_states`.
+
+---
+
+## Step 4: Integrate Isaac Perception Pipeline
+
+**References**: [Module 3 Ch.1 — Isaac SDK Setup](/docs/module-3-isaac/isaac-sdk-setup), [Module 3 Ch.2 — Perception Pipeline](/docs/module-3-isaac/perception-pipeline)
+
+Launch the Isaac ROS object detection node:
+
+```bash
+# Install Isaac ROS object detection
+sudo apt-get install ros-humble-isaac-ros-object-detection
+
+# Launch with camera input
+ros2 launch isaac_ros_object_detection isaac_ros_detectnet.launch.py \
+  model_name:=peoplenet \
+  model_repository_paths:=['/tmp/models']
+```
+
+```python
+# capstone_robot/nodes/perception_node.py
+import rclpy
+from rclpy.node import Node
+from vision_msgs.msg import Detection2DArray
+
+class PerceptionNode(Node):
+    def __init__(self):
+        super().__init__('perception_node')
+        self.detection_sub = self.create_subscription(
+            Detection2DArray,
+            '/detectnet/detections',
+            self.detection_callback,
+            10
+        )
+        self.get_logger().info('Perception node started')
+
+    def detection_callback(self, msg: Detection2DArray):
+        for detection in msg.detections:
+            self.get_logger().info(
+                f'Detected: {detection.results[0].hypothesis.class_id} '
+                f'confidence={detection.results[0].hypothesis.score:.2f}'
+            )
+```
+
+**Checkpoint ✓**: Running `ros2 topic echo /detectnet/detections` shows detected objects from camera feed.
+
+---
+
+## Step 5: Build the Voice Command Pipeline
+
+**References**: [Module 4 Ch.2 — Whisper Voice](/docs/module-4-vla/whisper-voice), [Module 4 Ch.3 — LLM Planning](/docs/module-4-vla/llm-planning)
+
+```python
+# capstone_robot/nodes/voice_node.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+import whisper
+import sounddevice as sd
+import numpy as np
+
+class VoiceCommandNode(Node):
+    def __init__(self):
+        super().__init__('voice_command_node')
+        self.model = whisper.load_model('base')
+        self.command_pub = self.create_publisher(String, '/voice_command', 10)
+        self.sample_rate = 16000
+        self.get_logger().info('Voice node ready — say a command')
+
+    def record_and_transcribe(self, duration: float = 3.0) -> str:
+        audio = sd.rec(
+            int(duration * self.sample_rate),
+            samplerate=self.sample_rate,
+            channels=1,
+            dtype='float32'
+        )
+        sd.wait()
+        audio_flat = audio.flatten()
+        result = self.model.transcribe(audio_flat)
+        return result['text'].strip()
+
+    def publish_command(self, text: str):
+        msg = String()
+        msg.data = text
+        self.command_pub.publish(msg)
+        self.get_logger().info(f'Voice command: "{text}"')
+```
+
+**Checkpoint ✓**: Speaking "pick up the red cube" publishes to `/voice_command` topic.
+
+---
+
+## Step 6: Implement LLM Task Planning
+
+**References**: [Module 4 Ch.3 — LLM Planning](/docs/module-4-vla/llm-planning)
+
+```python
+# capstone_robot/services/task_planner.py
+from openai import OpenAI
+
+client = OpenAI()
+
+SYSTEM_PROMPT = """You are a robot task planner. Convert natural language commands
+into structured robot action sequences. Available actions:
+- NAVIGATE_TO(x, y) — move base to position
+- DETECT_OBJECT(class_name) — run perception for object
+- PICK_UP(object_id) — grasp detected object
+- PLACE_AT(x, y, z) — place held object at location
+- SPEAK(message) — say message via TTS
+
+Return a JSON array of action steps only."""
+
+def plan_task(voice_command: str) -> list[dict]:
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+            {'role': 'user', 'content': voice_command},
+        ],
+        response_format={'type': 'json_object'},
+    )
+    import json
+    return json.loads(response.choices[0].message.content)['actions']
+```
+
+**Checkpoint ✓**: `plan_task("pick up the red cube and put it on the table")` returns a valid action sequence JSON.
+
+---
+
+## Step 7: Implement the Motion Planning Action Server
+
+**References**: [Module 1 Ch.3 — Services & Actions](/docs/module-1-ros2/services-actions)
+
+```python
+# capstone_robot/actions/manipulation_server.py
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionServer
+from capstone_interfaces.action import ManipulateObject
+
+class ManipulationActionServer(Node):
+    def __init__(self):
+        super().__init__('manipulation_server')
+        self._action_server = ActionServer(
+            self,
+            ManipulateObject,
+            'manipulate_object',
+            self.execute_callback
+        )
+
+    async def execute_callback(self, goal_handle):
+        self.get_logger().info(f'Executing: {goal_handle.request.action_type}')
+        feedback = ManipulateObject.Feedback()
+
+        # Simulate action phases
+        for progress in [25, 50, 75, 100]:
+            feedback.progress_percent = progress
+            goal_handle.publish_feedback(feedback)
+            await rclpy.sleep(0.5)
+
+        goal_handle.succeed()
+        result = ManipulateObject.Result()
+        result.success = True
+        return result
+```
+
+**Checkpoint ✓**: `ros2 action list` shows `/manipulate_object`. Sending a goal receives feedback updates.
+
+---
+
+## Step 8: Integrate Sim-to-Real Transfer
+
+**References**: [Module 3 Ch.4 — Sim-to-Real](/docs/module-3-isaac/sim-to-real)
+
+Apply domain randomization before real-hardware deployment:
+
+```python
+# capstone_robot/training/domain_randomizer.py
+import random
+
+class DomainRandomizer:
+    """Randomize simulation parameters to improve real-world transfer."""
+
+    def randomize_lighting(self, world_config: dict) -> dict:
+        world_config['ambient_light'] = random.uniform(0.3, 1.0)
+        world_config['light_direction'] = [
+            random.uniform(-1, 1),
+            random.uniform(-1, 1),
+            random.uniform(0.5, 1.0),
+        ]
+        return world_config
+
+    def randomize_object_positions(self, objects: list, radius: float = 0.1) -> list:
+        return [
+            {**obj, 'x': obj['x'] + random.uniform(-radius, radius),
+                    'y': obj['y'] + random.uniform(-radius, radius)}
+            for obj in objects
+        ]
+
+    def randomize_camera_noise(self, image_array):
+        noise = np.random.normal(0, 0.02, image_array.shape)
+        return np.clip(image_array + noise, 0, 1)
+```
+
+**Checkpoint ✓**: 100 randomized simulation episodes complete without crashes. Transfer policy tested on at least 3 object positions.
+
+---
+
+## Step 9: Full System Integration Test
+
+Connect all subsystems and run an end-to-end test:
+
+```bash
+# Terminal 1: Launch Gazebo simulation
+ros2 launch capstone_robot simulation.launch.py
+
+# Terminal 2: Launch perception stack
+ros2 launch capstone_robot perception.launch.py
+
+# Terminal 3: Launch voice and planning pipeline
+ros2 launch capstone_robot voice_pipeline.launch.py
+
+# Terminal 4: Run the integration test
+ros2 run capstone_robot integration_test --test-case pick_and_place
+```
+
+```python
+# capstone_robot/tests/test_integration.py
+"""End-to-end integration test for capstone system."""
+
+import pytest
+import rclpy
+from capstone_robot.coordinator import RobotCoordinator
+
+@pytest.mark.integration
+def test_pick_and_place_pipeline():
+    """Test complete pick-and-place task from voice command to execution."""
+    coordinator = RobotCoordinator()
+
+    # Simulate voice command
+    result = coordinator.execute_command('pick up the red cube')
+
+    assert result.success, f'Task failed: {result.error_message}'
+    assert result.object_grasped == 'red_cube'
+    assert result.final_position is not None
+```
+
+**Checkpoint ✓**: Integration test passes. Robot completes one full pick-and-place cycle in Gazebo.
+
+---
+
+## Step 10: Record Demo and Deploy
+
+**References**: [Module 3 Ch.1 — Isaac SDK Setup](/docs/module-3-isaac/isaac-sdk-setup) for Jetson deployment
+
+### Demo Recording (< 90 seconds)
+
+Record a demo video showing:
+1. Voice command issued: *"Pick up the red cube and place it on the table"*
+2. Whisper transcription visible in terminal
+3. LLM action plan displayed
+4. Robot executing pick-and-place in Gazebo
+5. (Optional) Same sequence on real Jetson hardware
+
+```bash
+# Record screen with audio
+ffmpeg -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 \
+  -f pulse -ac 2 -i default \
+  -t 90 capstone_demo.mp4
+```
+
+### Jetson Deployment (Optional)
+
+```bash
+# Cross-compile for ARM64 on development machine
+colcon build --cmake-args -DCMAKE_TOOLCHAIN_FILE=arm64_toolchain.cmake
+
+# Deploy to Jetson via SCP
+scp -r install/ jetson@192.168.1.100:~/capstone_ws/
+
+# On Jetson: source and run
+ssh jetson@192.168.1.100
+source ~/capstone_ws/install/setup.bash
+ros2 launch capstone_robot full_system.launch.py
+```
+
+**Checkpoint ✓**: Demo video under 90 seconds. All 5 subsystems visible. System runs for 5+ minutes without crashes.
+
+---
+
+## Capstone Completion Checklist
+
+- [ ] ROS 2 workspace builds without errors
+- [ ] Robot model spawns in Gazebo simulation
+- [ ] Isaac perception detects objects from camera
+- [ ] Voice commands transcribed by Whisper
+- [ ] LLM generates valid action plans from voice input
+- [ ] Robot executes pick-and-place task in simulation
+- [ ] Integration test passes end-to-end
+- [ ] Demo video recorded (< 90 seconds)
+- [ ] (Bonus) System deployed and tested on Jetson hardware
+
+:::tip Well Done
+Completing this capstone demonstrates end-to-end proficiency in physical AI systems — from low-level ROS 2 control to high-level VLA reasoning. This is production-grade robotics engineering.
+:::

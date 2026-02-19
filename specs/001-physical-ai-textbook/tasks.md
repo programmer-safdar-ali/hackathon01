@@ -71,34 +71,34 @@
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create website/docs/module-1-ros2/_category_.json with label "Module 1: ROS 2 Fundamentals", position 1, and link description
-- [ ] T022 [P] [US1] Create website/docs/module-2-simulation/_category_.json with label "Module 2: Digital Twin Simulation", position 2
-- [ ] T023 [P] [US1] Create website/docs/module-3-isaac/_category_.json with label "Module 3: NVIDIA Isaac Platform", position 3
-- [ ] T024 [P] [US1] Create website/docs/module-4-vla/_category_.json with label "Module 4: VLA Robotics", position 4
-- [ ] T025 [P] [US1] Create website/docs/capstone/_category_.json with label "Capstone Project", position 5
-- [ ] T026 [P] [US1] Create website/docs/hardware/_category_.json with label "Hardware Guides", position 6
-- [ ] T027 [P] [US1] Write website/docs/module-1-ros2/01-ros2-architecture.mdx — ROS 2 architecture overview with system diagram (Mermaid), node/topic concepts, DDS middleware explanation, and Python code examples
-- [ ] T028 [P] [US1] Write website/docs/module-1-ros2/02-nodes-topics.mdx — ROS 2 nodes, topics, publishers/subscribers with code examples (rclpy), Mermaid pub-sub diagram
-- [ ] T029 [P] [US1] Write website/docs/module-1-ros2/03-services-actions.mdx — ROS 2 services and actions with client/server code examples, async action patterns
-- [ ] T030 [P] [US1] Write website/docs/module-1-ros2/04-python-packages.mdx — Creating ROS 2 Python packages, setup.py, package.xml, colcon build workflow
-- [ ] T031 [P] [US1] Write website/docs/module-1-ros2/05-urdf-transforms.mdx — URDF robot description, TF2 transforms, joint types, visualization with RViz
-- [ ] T032 [P] [US1] Write website/docs/module-2-simulation/01-gazebo-basics.mdx — Gazebo Fortress setup, world files, spawning models, basic simulation controls
-- [ ] T033 [P] [US1] Write website/docs/module-2-simulation/02-physics-sensors.mdx — Physics engine configuration, sensor plugins (camera, lidar, IMU), SDF format
-- [ ] T034 [P] [US1] Write website/docs/module-2-simulation/03-unity-visualization.mdx — Unity Robotics Hub, ROS-TCP-Connector, URDF importer, visualization pipeline
-- [ ] T035 [P] [US1] Write website/docs/module-2-simulation/04-digital-twin-pipeline.mdx — End-to-end digital twin pipeline connecting Gazebo/Unity with ROS 2, data flow diagram
-- [ ] T036 [P] [US1] Write website/docs/module-3-isaac/01-isaac-sdk-setup.mdx — NVIDIA Isaac SDK installation, Jetson setup, sample application walkthrough
-- [ ] T037 [P] [US1] Write website/docs/module-3-isaac/02-perception-pipeline.mdx — Isaac perception: object detection, pose estimation, depth processing with code examples
-- [ ] T038 [P] [US1] Write website/docs/module-3-isaac/03-reinforcement-learning.mdx — Isaac Gym RL training, reward shaping, sim-to-real considerations, training scripts
-- [ ] T039 [P] [US1] Write website/docs/module-3-isaac/04-sim-to-real.mdx — Domain randomization, transfer learning, real-world deployment checklist
-- [ ] T040 [P] [US1] Write website/docs/module-4-vla/01-conversational-robotics.mdx — Conversational AI for robots, NLU pipeline, intent recognition, dialogue management
-- [ ] T041 [P] [US1] Write website/docs/module-4-vla/02-whisper-voice.mdx — OpenAI Whisper integration, speech-to-text pipeline, ROS 2 audio node, voice command processing
-- [ ] T042 [P] [US1] Write website/docs/module-4-vla/03-llm-planning.mdx — LLM-based task planning, prompt engineering for robot actions, safety constraints
-- [ ] T043 [P] [US1] Write website/docs/module-4-vla/04-vla-integration.mdx — Vision-Language-Action model integration, end-to-end VLA pipeline, multimodal inputs
-- [ ] T044 [P] [US1] Write website/docs/intro.md — Welcome page with textbook overview, learning objectives, prerequisites, and module navigation links
-- [ ] T045 [P] [US1] Write website/docs/schedule.md — 13-week learning schedule with weekly breakdowns mapping chapters to weeks, estimated 8-10 hours/week per SC-009
-- [ ] T046 [US1] Create website/src/pages/index.tsx — Homepage with hero section, module cards (4 modules), quick start links, and responsive layout using Tailwind CSS
-- [ ] T047 [US1] Create custom 404 page at website/src/pages/404.tsx with navigation back to module index (edge case: nonexistent chapter URL)
-- [ ] T048 [US1] Verify all Mermaid diagrams render in chapters, all code examples have syntax highlighting and copy button, and `npm run build` completes successfully in website/
+- [x] T021 [P] [US1] Create website/docs/module-1-ros2/_category_.json with label "Module 1: ROS 2 Fundamentals", position 1, and link description
+- [x] T022 [P] [US1] Create website/docs/module-2-simulation/_category_.json with label "Module 2: Digital Twin Simulation", position 2
+- [x] T023 [P] [US1] Create website/docs/module-3-isaac/_category_.json with label "Module 3: NVIDIA Isaac Platform", position 3
+- [x] T024 [P] [US1] Create website/docs/module-4-vla/_category_.json with label "Module 4: VLA Robotics", position 4
+- [x] T025 [P] [US1] Create website/docs/capstone/_category_.json with label "Capstone Project", position 5
+- [x] T026 [P] [US1] Create website/docs/hardware/_category_.json with label "Hardware Guides", position 6
+- [x] T027 [P] [US1] Write website/docs/module-1-ros2/01-ros2-architecture.mdx — ROS 2 architecture overview with system diagram (Mermaid), node/topic concepts, DDS middleware explanation, and Python code examples
+- [x] T028 [P] [US1] Write website/docs/module-1-ros2/02-nodes-topics.mdx — ROS 2 nodes, topics, publishers/subscribers with code examples (rclpy), Mermaid pub-sub diagram
+- [x] T029 [P] [US1] Write website/docs/module-1-ros2/03-services-actions.mdx — ROS 2 services and actions with client/server code examples, async action patterns
+- [x] T030 [P] [US1] Write website/docs/module-1-ros2/04-python-packages.mdx — Creating ROS 2 Python packages, setup.py, package.xml, colcon build workflow
+- [x] T031 [P] [US1] Write website/docs/module-1-ros2/05-urdf-transforms.mdx — URDF robot description, TF2 transforms, joint types, visualization with RViz
+- [x] T032 [P] [US1] Write website/docs/module-2-simulation/01-gazebo-basics.mdx — Gazebo Fortress setup, world files, spawning models, basic simulation controls
+- [x] T033 [P] [US1] Write website/docs/module-2-simulation/02-physics-sensors.mdx — Physics engine configuration, sensor plugins (camera, lidar, IMU), SDF format
+- [x] T034 [P] [US1] Write website/docs/module-2-simulation/03-unity-visualization.mdx — Unity Robotics Hub, ROS-TCP-Connector, URDF importer, visualization pipeline
+- [x] T035 [P] [US1] Write website/docs/module-2-simulation/04-digital-twin-pipeline.mdx — End-to-end digital twin pipeline connecting Gazebo/Unity with ROS 2, data flow diagram
+- [x] T036 [P] [US1] Write website/docs/module-3-isaac/01-isaac-sdk-setup.mdx — NVIDIA Isaac SDK installation, Jetson setup, sample application walkthrough
+- [x] T037 [P] [US1] Write website/docs/module-3-isaac/02-perception-pipeline.mdx — Isaac perception: object detection, pose estimation, depth processing with code examples
+- [x] T038 [P] [US1] Write website/docs/module-3-isaac/03-reinforcement-learning.mdx — Isaac Gym RL training, reward shaping, sim-to-real considerations, training scripts
+- [x] T039 [P] [US1] Write website/docs/module-3-isaac/04-sim-to-real.mdx — Domain randomization, transfer learning, real-world deployment checklist
+- [x] T040 [P] [US1] Write website/docs/module-4-vla/01-conversational-robotics.mdx — Conversational AI for robots, NLU pipeline, intent recognition, dialogue management
+- [x] T041 [P] [US1] Write website/docs/module-4-vla/02-whisper-voice.mdx — OpenAI Whisper integration, speech-to-text pipeline, ROS 2 audio node, voice command processing
+- [x] T042 [P] [US1] Write website/docs/module-4-vla/03-llm-planning.mdx — LLM-based task planning, prompt engineering for robot actions, safety constraints
+- [x] T043 [P] [US1] Write website/docs/module-4-vla/04-vla-integration.mdx — Vision-Language-Action model integration, end-to-end VLA pipeline, multimodal inputs
+- [x] T044 [P] [US1] Write website/docs/intro.md — Welcome page with textbook overview, learning objectives, prerequisites, and module navigation links
+- [x] T045 [P] [US1] Write website/docs/schedule.md — 13-week learning schedule with weekly breakdowns mapping chapters to weeks, estimated 8-10 hours/week per SC-009
+- [x] T046 [US1] Create website/src/pages/index.tsx — Homepage with hero section, module cards (4 modules), quick start links, and responsive layout using Tailwind CSS
+- [x] T047 [US1] Create custom 404 page at website/src/pages/404.tsx with navigation back to module index (edge case: nonexistent chapter URL)
+- [x] T048 [US1] Verify all Mermaid diagrams render in chapters, all code examples have syntax highlighting and copy button, and `npm run build` completes successfully in website/
 
 **Checkpoint**: User Story 1 complete. All 4 modules with 17 chapters navigable. Mermaid diagrams render. Code examples highlighted. 13-week schedule visible. Search works. Build passes. No backend required.
 
@@ -159,10 +159,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T070 [P] [US4] Write website/docs/capstone/overview.mdx — Capstone project goals, prerequisites (all 4 modules), system architecture diagram (Mermaid), hardware requirements, expected outcomes
-- [ ] T071 [P] [US4] Write website/docs/capstone/steps.mdx — 10+ step-by-step tasks per SC-010: ROS 2 workspace setup, Gazebo simulation environment, Isaac perception integration, VLA voice commands, object manipulation, with checkpoint validations and cross-module chapter references
-- [ ] T072 [P] [US4] Write website/docs/hardware/jetson-orin-nano.mdx — Jetson Orin Nano setup guide: parts list, OS installation, CUDA/cuDNN setup, Isaac SDK installation, troubleshooting
-- [ ] T073 [P] [US4] Write website/docs/hardware/robot-platforms.mdx — Supported robot platforms overview, comparison table, assembly guides, ROS 2 driver setup
+- [x] T070 [P] [US4] Write website/docs/capstone/overview.mdx — Capstone project goals, prerequisites (all 4 modules), system architecture diagram (Mermaid), hardware requirements, expected outcomes
+- [x] T071 [P] [US4] Write website/docs/capstone/steps.mdx — 10+ step-by-step tasks per SC-010: ROS 2 workspace setup, Gazebo simulation environment, Isaac perception integration, VLA voice commands, object manipulation, with checkpoint validations and cross-module chapter references
+- [x] T072 [P] [US4] Write website/docs/hardware/jetson-orin-nano.mdx — Jetson Orin Nano setup guide: parts list, OS installation, CUDA/cuDNN setup, Isaac SDK installation, troubleshooting
+- [x] T073 [P] [US4] Write website/docs/hardware/robot-platforms.mdx — Supported robot platforms overview, comparison table, assembly guides, ROS 2 driver setup
 
 **Checkpoint**: User Story 4 complete. Capstone guide with 10+ steps references all 4 modules. Hardware guides provide setup instructions. All content navigable without backend.
 

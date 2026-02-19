@@ -1,0 +1,299 @@
+---
+sidebar_position: 1
+title: "Jetson Orin Nano Setup"
+description: "Complete setup guide for NVIDIA Jetson Orin Nano: OS installation, CUDA/cuDNN, Isaac SDK, and ROS 2 configuration."
+---
+
+# Jetson Orin Nano Developer Kit Setup
+
+This guide covers everything needed to prepare a **Jetson Orin Nano (8 GB)** for the capstone project: OS flashing, CUDA toolkit setup, Isaac SDK installation, and ROS 2 Humble configuration.
+
+## Hardware Requirements
+
+| Component | Specification |
+|-----------|--------------|
+| **Board** | NVIDIA Jetson Orin Nano Developer Kit (8 GB) |
+| **Storage** | 64 GB+ NVMe SSD (recommended) or microSD |
+| **Power** | 5V/4A USB-C or DC barrel jack (19V) |
+| **Display** | HDMI or DisplayPort (for initial setup) |
+| **Camera** | USB webcam or CSI camera (IMX219 or IMX477) |
+| **Network** | Ethernet or USB Wi-Fi adapter |
+
+## Parts List
+
+```text
+- NVIDIA Jetson Orin Nano Developer Kit  .................. $499
+- WD SN530 NVMe SSD 512GB ................................. $60
+- 65W USB-C Power Adapter ................................. $25
+- CSI Camera Module (Raspberry Pi Camera v2 compatible) ... $30
+- USB-A to USB-C Cable (for flashing) ..................... $10
+                                                      ─────────
+                                                      Total ~$624
+```
+
+---
+
+## Step 1: Flash JetPack OS
+
+### Download SDK Manager
+
+Install NVIDIA SDK Manager on a host Ubuntu 22.04 machine:
+
+```bash
+# Download SDK Manager from NVIDIA
+wget https://developer.download.nvidia.com/sdkmanager/downloads/nvidia-sdkmanager_X.X.X_amd64.deb
+
+# Install
+sudo dpkg -i nvidia-sdkmanager_X.X.X_amd64.deb
+sudo apt-get install -f
+```
+
+### Flash JetPack 6.x
+
+1. Connect Jetson Orin Nano to host via USB-C cable
+2. Hold **Force Recovery** button, press **Reset**, then release both
+3. Launch SDK Manager: `sdkmanager`
+4. Select: **Jetson Orin Nano** → **JetPack 6.0** → check **CUDA**, **cuDNN**, **TensorRT**
+5. Click **Flash** and follow the prompts
+
+```bash
+# Verify flash succeeded (on Jetson after boot)
+jetson_release
+# Expected output:
+# NVIDIA Jetson Orin Nano (Developer kit)
+# L4T: 36.x.x | JetPack: 6.x.x
+```
+
+---
+
+## Step 2: Post-Install Configuration
+
+```bash
+# Update packages
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Set up swap (important for ML workloads)
+sudo systemctl disable nvzramconfig
+sudo fallocate -l 8G /mnt/8GB.swap
+sudo chmod 600 /mnt/8GB.swap
+sudo mkswap /mnt/8GB.swap
+sudo swapon /mnt/8GB.swap
+echo '/mnt/8GB.swap none swap sw 0 0' | sudo tee -a /etc/fstab
+
+# Verify CUDA
+nvcc --version
+# Expected: Cuda compilation tools, release 12.x
+
+# Verify GPU
+nvidia-smi
+# Expected: Ampere architecture, ~1022 CUDA cores
+```
+
+---
+
+## Step 3: Install ROS 2 Humble
+
+```bash
+# Set locale
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
+# Add ROS 2 repository
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+  -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+  http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | \
+  sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Install ROS 2 Humble (base — no GUI tools)
+sudo apt-get update
+sudo apt-get install -y ros-humble-ros-base python3-argcomplete
+
+# Install build tools
+sudo apt-get install -y python3-colcon-common-extensions python3-rosdep
+sudo rosdep init && rosdep update
+
+# Source setup
+echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+ros2 --version
+```
+
+---
+
+## Step 4: Install Isaac ROS
+
+```bash
+# Install Isaac ROS dependencies
+sudo apt-get install -y \
+  ros-humble-isaac-ros-common \
+  ros-humble-isaac-ros-image-pipeline
+
+# Install Isaac ROS object detection (for capstone perception)
+sudo apt-get install -y ros-humble-isaac-ros-object-detection
+
+# Verify
+ros2 pkg list | grep isaac
+```
+
+:::info Isaac ROS vs Isaac SDK
+For the capstone, we use **Isaac ROS** (ROS 2 packages) rather than the standalone Isaac SDK. Isaac ROS provides the same GPU-accelerated perception modules but integrates natively with the ROS 2 ecosystem.
+:::
+
+---
+
+## Step 5: Camera Setup
+
+### CSI Camera (Recommended)
+
+```bash
+# Test CSI camera with libargus
+nvgstcapture-1.0
+
+# Or with GStreamer pipeline
+gst-launch-1.0 nvarguscamerasrc ! \
+  'video/x-raw(memory:NVMM),width=1920,height=1080,framerate=30/1' ! \
+  nvvidconv ! \
+  'video/x-raw,width=1920,height=1080,format=BGRx' ! \
+  videoconvert ! \
+  video/x-raw,format=BGR ! \
+  appsink
+```
+
+### USB Camera
+
+```bash
+# Install V4L2 tools
+sudo apt-get install -y v4l-utils
+
+# List cameras
+v4l2-ctl --list-devices
+
+# Test USB camera
+ros2 run v4l2_camera v4l2_camera_node --ros-args -p video_device:=/dev/video0
+```
+
+### Publish Camera to ROS 2
+
+```bash
+# Launch Isaac ROS camera
+ros2 launch isaac_ros_argus_camera isaac_ros_argus_camera_mono.launch.py \
+  camera_id:=0 \
+  width:=1280 \
+  height:=720
+```
+
+**Checkpoint ✓**: `ros2 topic echo /image_raw --no-arr` shows image metadata at 30 fps.
+
+---
+
+## Step 6: Performance Optimization
+
+```bash
+# Set Jetson to maximum performance mode
+sudo nvpmodel -m 0        # Max power mode
+sudo jetson_clocks        # Max clock speeds
+
+# Monitor GPU and CPU usage
+tegrastats
+
+# Monitor temperatures
+watch -n 1 cat /sys/class/thermal/thermal_zone*/temp
+```
+
+```python
+# Use TensorRT for optimized inference (much faster than PyTorch)
+import tensorrt as trt
+
+TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+
+def load_engine(engine_path: str):
+    with open(engine_path, 'rb') as f, trt.Runtime(TRT_LOGGER) as runtime:
+        return runtime.deserialize_cuda_engine(f.read())
+```
+
+---
+
+## Step 7: Deploy Capstone Workspace
+
+```bash
+# Clone and build the capstone workspace
+mkdir -p ~/capstone_ws/src
+cd ~/capstone_ws/src
+git clone https://github.com/your-org/capstone_robot.git
+
+cd ~/capstone_ws
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+# Source workspace
+echo 'source ~/capstone_ws/install/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify all nodes start
+ros2 launch capstone_robot full_system.launch.py
+```
+
+---
+
+## Troubleshooting
+
+### Camera Not Detected
+
+```bash
+# Check camera is recognized
+ls /dev/video*
+
+# Check MIPI CSI connection (power cycle Jetson with camera connected)
+sudo dmesg | grep -i camera
+```
+
+### Out of Memory
+
+```bash
+# Check memory usage
+free -h
+
+# If swap is not active:
+sudo swapon /mnt/8GB.swap
+free -h  # should show 8 GB swap
+```
+
+### CUDA Not Found
+
+```bash
+# Add CUDA to PATH
+echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc
+nvcc --version
+```
+
+### Isaac ROS Node Crashes
+
+```bash
+# Check TensorRT version compatibility
+python3 -c "import tensorrt; print(tensorrt.__version__)"
+
+# Re-run with verbose logging
+ros2 launch isaac_ros_object_detection isaac_ros_detectnet.launch.py \
+  log_level:=DEBUG
+```
+
+---
+
+## Performance Benchmarks
+
+| Task | Jetson Orin Nano (8 GB) |
+|------|-------------------------|
+| Whisper ASR (base model) | ~0.8s per 3s audio |
+| Object detection (DetectNet) | ~30 fps |
+| TensorRT inference | ~15 ms per frame |
+| ROS 2 topic latency | < 5 ms |
+
+:::tip Battery Operation
+For mobile demos, use a 19V 65W USB-PD power bank. Ensure it supports 19V output — standard 5V/20V power banks may not work reliably with Jetson at full load.
+:::
