@@ -112,21 +112,21 @@
 
 ### Implementation for User Story 2
 
-- [ ] T049 [P] [US2] Create backend/app/scripts/ingest_content.py — CLI script to parse MDX files from website/docs/, chunk text (~500 tokens, 50-token overlap), generate embeddings via OpenAI, and upsert to Qdrant "textbook_content" collection with payload fields (module, chapter, section, text, difficulty, url, chunk_index) per data-model.md
-- [ ] T050 [P] [US2] Create backend/app/services/rate_limiter.py — Tiered rate limiting service: 10 queries/hr anonymous (by IP hash), 60 queries/hr authenticated (by user_id). Uses rate_limits table. Sliding window reset logic per data-model.md
-- [ ] T051 [US2] Create backend/app/services/rag.py — RAG pipeline: accept question → embed with text-embedding-3-small → search Qdrant top 5 → build prompt with retrieved context → call GPT-4o-mini → return answer with citations. Support module_filter and difficulty_filter. Handle no-results edge case with fallback message
-- [ ] T052 [US2] Create backend/app/api/chat.py — POST /api/chat endpoint per contracts/api.yaml: accept ChatRequest, call RAG service, check rate limits, return ChatResponse with message, conversation_id, citations, rate_limit info. Handle 429 (rate limit) and 503 (service unavailable) errors
-- [ ] T053 [US2] Add POST /api/chat/stream endpoint in backend/app/api/chat.py — SSE streaming variant using StreamingResponse, yielding ChatStreamEvent objects as Server-Sent Events per contracts/api.yaml
-- [ ] T054 [US2] Create website/src/components/ChatbotWidget/index.tsx — Floating chat button (bottom-right), expandable chat panel with message list, input field, send button. Call POST /api/chat on submit, display response with citation links. Show loading state and error messages
-- [ ] T055 [US2] Create website/src/components/ChatbotWidget/ChatbotWidget.module.css — Chat panel styling: floating button, slide-up panel, message bubbles (user/assistant), citation links, responsive mobile layout
-- [ ] T056 [US2] Integrate ChatbotWidget globally by adding it to website/src/theme/Root.tsx as a persistent component across all pages
-- [ ] T057 [US2] Add chatbot graceful degradation: when backend returns 503, show "Chatbot is temporarily unavailable" in the ChatbotWidget. When rate limited (429), show limit message with reset time
-- [ ] T058 [US2] Add input validation in ChatbotWidget: truncate messages exceeding 2000 characters and display notification to user (edge case per spec)
-- [ ] T059 [US2] Create scripts/ingest-content.sh — Shell wrapper to run content ingestion pipeline: activate venv, execute ingest_content.py with --docs-path argument
-- [ ] T060 [US2] Create backend/tests/test_chat.py — pytest tests for POST /api/chat: valid question returns answer with citations, off-topic question returns refusal, rate limit exceeded returns 429, empty message returns 400
-- [ ] T061 [US2] Create backend/tests/test_rate_limiter.py — pytest tests for rate limiter: anonymous user blocked after 10 queries, window reset after 1 hour, authenticated user allowed 60 queries
-- [ ] T062 [US2] Create backend/tests/test_rag.py — pytest tests for RAG pipeline: embedding generation, Qdrant search returns results, prompt construction with context, no-results fallback message
-- [ ] T063 [US2] Create backend/tests/conftest.py — pytest fixtures: async test client, mock Qdrant client, mock OpenAI client, test database session, sample chat request payloads
+- [x] T049 [P] [US2] Create backend/app/scripts/ingest_content.py — CLI script to parse MDX files from website/docs/, chunk text (~500 tokens, 50-token overlap), generate embeddings via OpenAI, and upsert to Qdrant "textbook_content" collection with payload fields (module, chapter, section, text, difficulty, url, chunk_index) per data-model.md
+- [x] T050 [P] [US2] Create backend/app/services/rate_limiter.py — Tiered rate limiting service: 10 queries/hr anonymous (by IP hash), 60 queries/hr authenticated (by user_id). Uses rate_limits table. Sliding window reset logic per data-model.md
+- [x] T051 [US2] Create backend/app/services/rag.py — RAG pipeline: accept question → embed with text-embedding-3-small → search Qdrant top 5 → build prompt with retrieved context → call GPT-4o-mini → return answer with citations. Support module_filter and difficulty_filter. Handle no-results edge case with fallback message
+- [x] T052 [US2] Create backend/app/api/chat.py — POST /api/chat endpoint per contracts/api.yaml: accept ChatRequest, call RAG service, check rate limits, return ChatResponse with message, conversation_id, citations, rate_limit info. Handle 429 (rate limit) and 503 (service unavailable) errors
+- [x] T053 [US2] Add POST /api/chat/stream endpoint in backend/app/api/chat.py — SSE streaming variant using StreamingResponse, yielding ChatStreamEvent objects as Server-Sent Events per contracts/api.yaml
+- [x] T054 [US2] Create website/src/components/ChatbotWidget/index.tsx — Floating chat button (bottom-right), expandable chat panel with message list, input field, send button. Call POST /api/chat on submit, display response with citation links. Show loading state and error messages
+- [x] T055 [US2] Create website/src/components/ChatbotWidget/ChatbotWidget.module.css — Chat panel styling: floating button, slide-up panel, message bubbles (user/assistant), citation links, responsive mobile layout
+- [x] T056 [US2] Integrate ChatbotWidget globally by adding it to website/src/theme/Root.tsx as a persistent component across all pages
+- [x] T057 [US2] Add chatbot graceful degradation: when backend returns 503, show "Chatbot is temporarily unavailable" in the ChatbotWidget. When rate limited (429), show limit message with reset time
+- [x] T058 [US2] Add input validation in ChatbotWidget: truncate messages exceeding 2000 characters and display notification to user (edge case per spec)
+- [x] T059 [US2] Create scripts/ingest-content.sh — Shell wrapper to run content ingestion pipeline: activate venv, execute ingest_content.py with --docs-path argument
+- [x] T060 [US2] Create backend/tests/test_chat.py — pytest tests for POST /api/chat: valid question returns answer with citations, off-topic question returns refusal, rate limit exceeded returns 429, empty message returns 400
+- [x] T061 [US2] Create backend/tests/test_rate_limiter.py — pytest tests for rate limiter: anonymous user blocked after 10 queries, window reset after 1 hour, authenticated user allowed 60 queries
+- [x] T062 [US2] Create backend/tests/test_rag.py — pytest tests for RAG pipeline: embedding generation, Qdrant search returns results, prompt construction with context, no-results fallback message
+- [x] T063 [US2] Create backend/tests/conftest.py — pytest fixtures: async test client, mock Qdrant client, mock OpenAI client, test database session, sample chat request payloads
 
 **Checkpoint**: User Story 2 complete. Chatbot widget on every page. Questions answered with citations <2s. Rate limiting enforced. Graceful degradation on errors. Backend tests pass.
 
@@ -234,11 +234,11 @@
 
 **Purpose**: CI/CD, performance, accessibility, deployment, and demo preparation
 
-- [ ] T097 [P] Create .github/workflows/deploy-website.yml — GitHub Actions: on push to main, build Docusaurus, deploy to GitHub Pages
-- [ ] T098 [P] Create .github/workflows/deploy-backend.yml — GitHub Actions: on push to main, deploy FastAPI to Vercel
-- [ ] T099 [P] Create .github/workflows/validate.yml — GitHub Actions: run pytest in backend/, run npm run build in website/, run Lighthouse CI (target >= 90), check for broken links
-- [ ] T100 [P] Create scripts/validate-code-examples.sh — Script to extract and validate all code examples from MDX files execute correctly
-- [ ] T101 [P] Create scripts/generate-embeddings.sh — Shell wrapper to re-embed all textbook content to Qdrant
+- [x] T097 [P] Create .github/workflows/deploy-website.yml — GitHub Actions: on push to main, build Docusaurus, deploy to GitHub Pages
+- [x] T098 [P] Create .github/workflows/deploy-backend.yml — GitHub Actions: on push to main, deploy FastAPI to Vercel
+- [x] T099 [P] Create .github/workflows/validate.yml — GitHub Actions: run pytest in backend/, run npm run build in website/, run Lighthouse CI (target >= 90), check for broken links
+- [x] T100 [P] Create scripts/validate-code-examples.sh — Script to extract and validate all code examples from MDX files execute correctly
+- [x] T101 [P] Create scripts/generate-embeddings.sh — Shell wrapper to re-embed all textbook content to Qdrant
 - [ ] T102 Run WCAG 2.1 AA accessibility audit on all pages: verify alt text on diagrams, keyboard navigation, color contrast, screen reader compatibility per FR-018 and SC-006
 - [ ] T103 Optimize page load performance: verify initial page load < 3s (SC-005), lazy-load ChatbotWidget, optimize image assets in website/static/img/
 - [ ] T104 Verify chatbot p95 latency < 2s under normal load (SC-004) using the 100-question test set (SC-003). Document accuracy results

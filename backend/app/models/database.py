@@ -10,22 +10,41 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
     AsyncSession,
+    AsyncEngine,
 )
 from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
-
-# Create async engine
-engine = create_async_engine(settings.database_url, echo=False)
-
-# Create async session factory
-async_session = async_sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
 
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy models."""
     pass
+
+
+_engine: AsyncEngine | None = None
+_async_session: async_sessionmaker | None = None
+
+
+def _get_engine() -> AsyncEngine:
+    global _engine
+    if _engine is None:
+        _engine = create_async_engine(settings.database_url, echo=False)
+    return _engine
+
+
+def _get_session_factory() -> async_sessionmaker:
+    global _async_session
+    if _async_session is None:
+        _async_session = async_sessionmaker(
+            _get_engine(), class_=AsyncSession, expire_on_commit=False
+        )
+    return _async_session
+
+
+# Kept for Alembic compatibility
+@property
+def engine() -> AsyncEngine:
+    return _get_engine()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -35,5 +54,5 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     Yields:
         AsyncSession: Database session for the request lifecycle.
     """
-    async with async_session() as session:
+    async with _get_session_factory()() as session:
         yield session

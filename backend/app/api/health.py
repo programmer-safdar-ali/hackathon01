@@ -8,7 +8,7 @@ that verify connectivity to external services.
 from fastapi import APIRouter
 from sqlalchemy import text
 from app.services.qdrant_client import get_qdrant_client
-from app.models.database import engine
+from app.models.database import _get_engine
 
 router = APIRouter(tags=["System"])
 
@@ -34,7 +34,7 @@ async def health_check():
 
     # Check database connectivity
     try:
-        async with engine.connect() as conn:
+        async with _get_engine().connect() as conn:
             await conn.execute(text("SELECT 1"))
         db_status = "connected"
     except Exception:

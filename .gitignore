@@ -6,6 +6,7 @@ website/build/
 website/.docusaurus/
 dist/
 
+/backend/.env
 # Python
 __pycache__/
 *.pyc

@@ -13,6 +13,8 @@ from httpx import ASGITransport, AsyncClient
 
 from app.main import app
 from app.models.database import get_db
+from app.models import chat as _chat_models  # noqa: ensure ChatConversation mapper is registered
+from app.models import user as _user_models  # noqa: ensure User/Session/RateLimit mappers are registered
 
 
 class FakeAsyncSession:
@@ -133,7 +135,8 @@ def sample_long_message():
 
 @pytest.fixture
 def mock_qdrant_client():
-    with patch("app.services.qdrant_client.get_qdrant_client") as mock:
+    # Patch where it is used (rag.py imports get_qdrant_client into its namespace)
+    with patch("app.services.rag.get_qdrant_client") as mock:
         client = MagicMock()
         mock.return_value = client
 
