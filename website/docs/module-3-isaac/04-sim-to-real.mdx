@@ -3,6 +3,8 @@ sidebar_position: 4
 title: "Sim-to-Real Transfer"
 description: "Bridge the simulation-to-reality gap with domain randomization, system identification, progressive training, and real-world deployment strategies."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Sim-to-Real Transfer
 
@@ -349,3 +351,83 @@ In the next module, we shift from low-level control to high-level intelligence �
 3. **Progressive Training**: Implement the 3-stage training pipeline (clean → randomized → system-ID). Compare final performance against training only in the randomized environment.
 
 4. **Deployment Simulation**: Simulate the deployment checklist by adding realistic noise, latency, and actuator limits to a clean sim environment. Measure how much performance degrades.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Sim-to-Real Transfer"
+  questions={[
+    {
+      id: 1,
+      question: "What is domain randomization, and how does it improve sim-to-real transfer?",
+      options: [
+        "It randomly selects the simulation physics engine for each training episode",
+        "It randomizes simulation parameters (friction, mass, appearance) during training so the policy learns to be robust across parameter variations including real-world conditions",
+        "It generates random reward functions to prevent overfitting to one task",
+        "It randomly swaps the robot model between different robot platforms during training"
+      ],
+      correctIndex: 1,
+      explanation: "Domain randomization trains the policy across a wide distribution of simulated conditions. The real world is one sample from this distribution. If the training distribution is wide enough, the real robot's dynamics fall within it — and the policy transfers successfully.",
+      sectionRef: "#domain-randomization",
+      sectionLabel: "Domain Randomization"
+    },
+    {
+      id: 2,
+      question: "What is system identification (system ID) in the sim-to-real transfer pipeline?",
+      options: [
+        "The process of registering the robot with the NVIDIA Isaac SDK license server",
+        "Measuring real robot parameters (friction, inertia, actuator delays) and updating the simulation to match — reducing the simulation gap",
+        "Identifying which components of the robot need hardware replacement",
+        "Assigning unique IDs to each robot in a multi-robot fleet"
+      ],
+      correctIndex: 1,
+      explanation: "System ID closes the sim-to-real gap from the simulation side: measure real joint friction, motor response curves, and inertial properties, then update the simulation to match. Combined with domain randomization, this produces a tighter distribution around real-world conditions.",
+      sectionRef: "#system-identification",
+      sectionLabel: "System Identification"
+    },
+    {
+      id: 3,
+      question: "What is the purpose of a 'deployment checklist' before running a trained RL policy on a real robot?",
+      options: [
+        "It ensures the robot's software is properly licensed",
+        "It systematically verifies safety constraints — joint limits, velocity caps, emergency stop functionality — before the autonomous policy controls the real robot",
+        "It documents the robot's serial number and maintenance history",
+        "It calibrates the simulation physics to match real-world conditions"
+      ],
+      correctIndex: 1,
+      explanation: "Running an untested RL policy on real hardware risks damaging the robot or injuring people. A deployment checklist verifies: hardware limits are enforced in code, emergency stop is tested, the policy operates within safe velocity/torque bounds, and a human operator is present for the first runs.",
+      sectionRef: "#deployment-checklist",
+      sectionLabel: "Deployment Checklist"
+    },
+    {
+      id: 4,
+      question: "What does 'transfer learning' mean in the context of sim-to-real adaptation?",
+      options: [
+        "Moving the trained model file from the training server to the robot's computer",
+        "Fine-tuning the simulation-trained policy on a small amount of real robot data to adapt to the real-world distribution",
+        "Transferring the reward function from one task to another related task",
+        "Converting the policy from PyTorch to TensorRT format for deployment"
+      ],
+      correctIndex: 1,
+      explanation: "Transfer learning for sim-to-real takes a policy trained extensively in simulation and fine-tunes it with a small amount of real robot experience (which is expensive to collect). The simulation training provides a good initialization; fine-tuning adapts the final layers to the real-world distribution.",
+      sectionRef: "#transfer-learning",
+      sectionLabel: "Transfer Learning"
+    },
+    {
+      id: 5,
+      question: "Why is operating within 'safe joint velocity and torque limits' especially critical when deploying RL policies compared to traditional PID controllers?",
+      options: [
+        "RL policies run at higher frequency than PID controllers and need higher limits",
+        "RL policies can generate extreme commands not seen in training, potentially commanding unsafe velocities — hard limits in the control stack prevent hardware damage",
+        "PID controllers do not support joint velocity limits",
+        "RL policies require wider limits because they were trained with domain randomization"
+      ],
+      correctIndex: 1,
+      explanation: "Unlike PID controllers with well-understood stability guarantees, RL policies are black boxes. In out-of-distribution situations, they can produce extreme, unexpected commands. Hardware safety limits (enforced independently of the policy in the control stack) act as a final safety net.",
+      sectionRef: "#safety-limits",
+      sectionLabel: "Safety Limits"
+    }
+  ]}
+/>

@@ -3,6 +3,8 @@ sidebar_position: 1
 title: "Isaac SDK Setup"
 description: "Install and configure NVIDIA Isaac SDK on Jetson Orin Nano, set up CUDA/cuDNN, and run your first Isaac ROS perception application."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Isaac SDK Setup
 
@@ -752,3 +754,83 @@ In the next chapter, we will build a complete perception pipeline using Isaac RO
 4. **Performance Benchmarking**: Run the AprilTag detection pipeline and measure: (a) the inference latency per frame using `ros2 topic hz` and `ros2 topic delay`, (b) GPU utilization using `nvidia-smi dmon`, and (c) CPU usage using `htop`. Compare these metrics with a CPU-only AprilTag detector (`apriltag_ros`) running on the same hardware.
 
 5. **Custom Container**: Create a custom Dockerfile that extends the Isaac ROS base image with your own ROS 2 package. The package should contain a simple node that subscribes to AprilTag detections and publishes the average distance to all detected tags on a custom topic `/apriltag/avg_distance`. Build the container, run it, and verify the custom topic produces correct data.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="NVIDIA Isaac SDK Setup"
+  questions={[
+    {
+      id: 1,
+      question: "What is the primary advantage of using Docker containers for NVIDIA Isaac ROS development?",
+      options: [
+        "Docker reduces GPU memory usage during inference",
+        "Docker provides a pre-configured environment with all CUDA, cuDNN, and Isaac ROS dependencies, ensuring reproducibility across machines",
+        "Docker automatically optimizes neural networks for the target Jetson hardware",
+        "Docker is required by NVIDIA to activate Isaac SDK licenses"
+      ],
+      correctIndex: 1,
+      explanation: "Isaac ROS components have complex dependencies (specific CUDA versions, TensorRT, GXF). Docker containers package all dependencies together, so the same container runs identically on a developer's workstation and on Jetson hardware — eliminating 'works on my machine' problems.",
+      sectionRef: "#docker-setup",
+      sectionLabel: "Docker Setup"
+    },
+    {
+      id: 2,
+      question: "What is TensorRT, and why is it critical for Isaac ROS inference on Jetson?",
+      options: [
+        "TensorRT is a training framework for neural networks on NVIDIA GPUs",
+        "TensorRT optimizes trained models (quantization, layer fusion, kernel selection) for maximum inference speed on NVIDIA hardware",
+        "TensorRT is a visualization tool for neural network architectures",
+        "TensorRT converts ROS 2 messages into GPU-compatible data formats"
+      ],
+      correctIndex: 1,
+      explanation: "TensorRT compiles and optimizes trained models specifically for the target NVIDIA GPU. Optimizations include INT8/FP16 quantization, layer fusion, and kernel auto-tuning. On Jetson Orin, TensorRT can deliver 3-10x speedup over PyTorch inference for the same model.",
+      sectionRef: "#tensorrt-optimization",
+      sectionLabel: "TensorRT Optimization"
+    },
+    {
+      id: 3,
+      question: "What is GXF (Graph Execution Framework) in the context of Isaac ROS?",
+      options: [
+        "A robotics simulation framework alternative to Gazebo",
+        "A C++ runtime for building high-performance, graph-structured perception pipelines that efficiently manage GPU memory and parallel execution",
+        "A configuration language for defining Isaac ROS launch files",
+        "A hardware abstraction layer for Jetson GPIO pins"
+      ],
+      correctIndex: 1,
+      explanation: "GXF is the underlying runtime that Isaac ROS components use internally. It models perception pipelines as graphs of codelets (processing units) connected by message queues. GXF manages zero-copy GPU memory transfers between nodes, enabling high-throughput processing that ROS 2's standard publisher/subscriber cannot match.",
+      sectionRef: "#gxf-runtime",
+      sectionLabel: "GXF Runtime"
+    },
+    {
+      id: 4,
+      question: "On a Jetson Orin, what does `sudo nvpmodel -m 0` and `sudo jetson_clocks` accomplish?",
+      options: [
+        "They install CUDA drivers and configure the GPU for development mode",
+        "They set the Jetson to maximum power mode and lock all CPU/GPU clocks to their maximum frequency for consistent benchmarking",
+        "They enable the Jetson to accept remote GPU commands over the network",
+        "They configure the Jetson's camera sensors for Isaac ROS applications"
+      ],
+      correctIndex: 1,
+      explanation: "nvpmodel -m 0 selects MAXN power mode (all cores, maximum power budget). jetson_clocks locks CPU, GPU, and memory frequencies to their maximum values. Together, these commands eliminate performance variability from dynamic frequency scaling — essential for reproducible benchmarking.",
+      sectionRef: "#jetson-performance-configuration",
+      sectionLabel: "Jetson Performance Configuration"
+    },
+    {
+      id: 5,
+      question: "What does the Isaac ROS AprilTag package provide that standard CPU-based AprilTag detection cannot?",
+      options: [
+        "Support for additional tag families beyond AprilTag 3",
+        "GPU-accelerated detection and 6-DOF pose estimation using CUDA, achieving significantly higher throughput on NVIDIA hardware",
+        "Automatic tag printing and manufacturing calibration tools",
+        "Integration with ROS 1 for legacy robot systems"
+      ],
+      correctIndex: 1,
+      explanation: "Isaac ROS AprilTag uses CUDA-accelerated image processing. On Jetson Orin, it can process multiple camera streams simultaneously at rates that CPU-based detectors (apriltag_ros) cannot match — enabling real-time detection at high resolutions needed for precise robot manipulation.",
+      sectionRef: "#isaac-ros-apriltag",
+      sectionLabel: "Isaac ROS AprilTag"
+    }
+  ]}
+/>

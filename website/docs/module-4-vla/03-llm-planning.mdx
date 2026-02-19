@@ -3,6 +3,8 @@ sidebar_position: 3
 title: "LLM-Based Task Planning"
 description: "Use large language models for robot task planning with prompt engineering, affordance grounding, safety constraints, and hierarchical plan execution."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # LLM-Based Task Planning
 
@@ -544,3 +546,83 @@ In the next chapter, we explore **Vision-Language-Action (VLA) models** that col
 3. **Safety Validation**: Create a safety rule set for a household robot. Test that the validator catches at least 5 different types of unsafe plans.
 
 4. **Re-Planning Loop**: Simulate a pick-and-place task where the first pick attempt fails (object slipped). Verify that the re-planner generates a corrected plan based on the updated scene.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="LLM-Based Task Planning"
+  questions={[
+    {
+      id: 1,
+      question: "What is the primary advantage of using an LLM for robot task planning compared to handcrafted rule-based planners?",
+      options: [
+        "LLMs guarantee correct plans because they have memorized all possible robot scenarios",
+        "LLMs can handle diverse, open-ended natural language instructions and generalize to novel situations without needing explicit rules for every scenario",
+        "LLMs plan faster than rule-based systems for complex tasks",
+        "LLMs eliminate the need for a robot action library"
+      ],
+      correctIndex: 1,
+      explanation: "Rule-based planners require explicitly programmed rules for every situation — brittle and hard to scale. LLMs can interpret diverse natural language, understand context, and compose action sequences for novel scenarios using their broad world knowledge — without pre-defined rules for each case.",
+      sectionRef: "#llm-planning-advantages",
+      sectionLabel: "LLM Planning Advantages"
+    },
+    {
+      id: 2,
+      question: "What is 'structured output' in the context of LLM-based robot planning, and why is it important?",
+      options: [
+        "Structured output formats the LLM's response for display in a user interface",
+        "Forcing the LLM to output valid JSON or a predefined schema makes the plan machine-readable and directly executable by the robot's action dispatcher",
+        "Structured output limits the LLM to using only pre-approved vocabulary in its plans",
+        "It refers to organizing the LLM's training data in a structured database"
+      ],
+      correctIndex: 1,
+      explanation: "An LLM producing free-text plans requires complex parsing to extract robot commands. Structured output (enforced via function calling or output schemas) produces JSON like `{action: 'pick', object: 'cup', location: 'table'}` — directly parseable by the robot's execution layer without ambiguity.",
+      sectionRef: "#structured-output",
+      sectionLabel: "Structured Output"
+    },
+    {
+      id: 3,
+      question: "What is the purpose of a 'safety validator' in an LLM planning pipeline for robots?",
+      options: [
+        "It checks that the LLM's API key is valid before each request",
+        "It reviews LLM-generated plans against safety constraints (joint limits, workspace boundaries, collision rules) and rejects or modifies unsafe plans before execution",
+        "It validates that the robot's hardware sensors are functioning before running the plan",
+        "It ensures the LLM does not use inappropriate language in its responses"
+      ],
+      correctIndex: 1,
+      explanation: "LLMs can generate plans that are syntactically correct but physically dangerous — exceeding joint limits, commanding the robot into obstacles, or attempting impossible grasps. A safety validator applies domain-specific rules to filter or correct dangerous plans before the robot executes them.",
+      sectionRef: "#safety-validation",
+      sectionLabel: "Safety Validation"
+    },
+    {
+      id: 4,
+      question: "What is 'chain-of-thought prompting' and how does it benefit LLM-based robot task planning?",
+      options: [
+        "It chains multiple LLM API calls together to parallelize planning",
+        "It asks the LLM to show its reasoning steps before outputting the final plan, improving plan quality and making errors easier to diagnose",
+        "It creates a chain of prompt templates linked together for different robot tasks",
+        "It is a technique to compress long robot plans into shorter prompt inputs"
+      ],
+      correctIndex: 1,
+      explanation: "Chain-of-thought (CoT) prompting asks the LLM to reason step by step: 'First I need to locate the cup, then move the arm to it, then close the gripper...'. This structured reasoning improves plan quality for complex tasks and makes the LLM's assumptions visible — enabling better debugging and safety review.",
+      sectionRef: "#chain-of-thought",
+      sectionLabel: "Chain-of-Thought Prompting"
+    },
+    {
+      id: 5,
+      question: "What is 're-planning' in a closed-loop robot execution system, and when is it triggered?",
+      options: [
+        "Re-planning is scheduling the next autonomous mission",
+        "Re-planning is triggered when execution feedback indicates the current plan has failed (e.g., object not found, grasp failed), generating a new plan based on the updated world state",
+        "Re-planning creates a backup plan before the primary plan executes",
+        "Re-planning optimizes an existing plan to reduce the number of steps"
+      ],
+      correctIndex: 1,
+      explanation: "Robots operate in an uncertain world. If the object moved or a grasp failed, continuing the original plan is wrong. Re-planning queries the LLM with updated world state (from perception) to generate a corrected plan. This closed-loop adaptation is essential for reliable task execution.",
+      sectionRef: "#closed-loop-replanning",
+      sectionLabel: "Closed-Loop Re-planning"
+    }
+  ]}
+/>

@@ -3,6 +3,8 @@ sidebar_position: 3
 title: "Reinforcement Learning"
 description: "Train robot control policies with NVIDIA Isaac Gym using GPU-accelerated RL, reward shaping, PPO, and curriculum learning."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Reinforcement Learning
 
@@ -377,3 +379,83 @@ In the next chapter, we tackle the **Sim-to-Real Transfer** problem — bridging
 3. **Curriculum Design**: Implement a curriculum that trains a robot to first stand, then walk on flat ground, then walk on uneven terrain. Compare final performance against training without curriculum.
 
 4. **Algorithm Comparison**: Train humanoid locomotion with both PPO and SAC. Compare sample efficiency, training stability, and final gait quality.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Reinforcement Learning with Isaac Gym"
+  questions={[
+    {
+      id: 1,
+      question: "What is the primary advantage of using Isaac Gym for reinforcement learning compared to traditional simulation environments?",
+      options: [
+        "Isaac Gym provides pre-trained policies that only need fine-tuning",
+        "Isaac Gym runs thousands of parallel physics simulations entirely on the GPU, dramatically accelerating training data collection",
+        "Isaac Gym eliminates the need for reward function design",
+        "Isaac Gym works offline without requiring a GPU"
+      ],
+      correctIndex: 1,
+      explanation: "Isaac Gym runs thousands of robot environments simultaneously on a single GPU (vs. CPU-based simulators that run one or a few environments). This massive parallelism allows collecting millions of simulation steps per hour, reducing training time from weeks to hours.",
+      sectionRef: "#isaac-gym-parallelism",
+      sectionLabel: "Isaac Gym Parallelism"
+    },
+    {
+      id: 2,
+      question: "In reinforcement learning for robotics, what is the reward function, and why is reward shaping challenging?",
+      options: [
+        "The reward function is the neural network architecture; shaping means adjusting its size",
+        "The reward function defines what behavior to encourage — the agent maximizes it; shaping is hard because poor reward design leads to unexpected, exploitative strategies",
+        "The reward function measures simulation accuracy; shaping adjusts physics parameters",
+        "Reward shaping refers to the process of normalizing sensor inputs before training"
+      ],
+      correctIndex: 1,
+      explanation: "The reward function tells the agent what it should optimize. Poorly designed rewards lead to reward hacking — the agent finds unexpected ways to maximize reward without achieving the desired behavior. For example, a robot rewarded only for forward velocity might learn to fall forward instead of walk.",
+      sectionRef: "#reward-function-design",
+      sectionLabel: "Reward Function Design"
+    },
+    {
+      id: 3,
+      question: "What does PPO (Proximal Policy Optimization) do to stabilize reinforcement learning training?",
+      options: [
+        "PPO uses a fixed learning rate throughout training to prevent oscillation",
+        "PPO limits how much the policy can change in each update step using a clipping ratio, preventing destructively large updates",
+        "PPO replays past experiences to improve sample efficiency",
+        "PPO uses model-based planning to generate synthetic training data"
+      ],
+      correctIndex: 1,
+      explanation: "PPO's key innovation is clipping the policy update ratio within [1-ε, 1+ε]. This prevents the policy from changing too dramatically in a single gradient step — which could collapse training. This makes PPO much more stable than vanilla policy gradient methods while remaining on-policy.",
+      sectionRef: "#ppo-algorithm",
+      sectionLabel: "PPO Algorithm"
+    },
+    {
+      id: 4,
+      question: "What is 'curriculum learning' in the context of training robots with reinforcement learning?",
+      options: [
+        "Using a fixed set of textbook exercises to define the agent's training tasks",
+        "Progressively increasing task difficulty — starting with simpler variations and adding complexity as the agent improves",
+        "Teaching the robot using pre-recorded human demonstrations",
+        "Scheduling GPU resources to maximize training throughput"
+      ],
+      correctIndex: 1,
+      explanation: "Curriculum learning mirrors how humans learn — start easy, increase difficulty. For locomotion, you might start with flat ground, then add slopes, then uneven terrain, then payload. Starting too hard leads to no learning; curriculum accelerates convergence and improves final performance.",
+      sectionRef: "#curriculum-learning",
+      sectionLabel: "Curriculum Learning"
+    },
+    {
+      id: 5,
+      question: "Why must policies trained in Isaac Gym often be 'adapted' before deploying on real robots?",
+      options: [
+        "Isaac Gym uses different motor control protocols than real robots",
+        "The sim-to-real gap — differences in physics, friction, actuator dynamics, and sensor noise between simulation and reality — causes policies to fail on real hardware",
+        "Real robots have different joint ranges than those modeled in Isaac Gym",
+        "Isaac Gym policies use GPU tensors that must be converted to CPU format for deployment"
+      ],
+      correctIndex: 1,
+      explanation: "Simulation is an approximation. Real contact forces, motor backlash, cable elasticity, and sensor noise differ from the idealized simulation. A policy optimized purely in simulation will exploit simulation-specific behaviors that don't exist on real hardware, causing it to fail when deployed.",
+      sectionRef: "#sim-to-real-considerations",
+      sectionLabel: "Sim-to-Real Considerations"
+    }
+  ]}
+/>

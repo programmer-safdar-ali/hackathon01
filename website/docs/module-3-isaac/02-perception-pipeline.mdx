@@ -3,6 +3,8 @@ sidebar_position: 2
 title: "Perception Pipeline"
 description: "Build robot perception systems with NVIDIA Isaac for object detection, 6-DOF pose estimation, depth processing, and real-time inference on Jetson."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Perception Pipeline
 
@@ -433,3 +435,83 @@ In the next chapter, we explore **Reinforcement Learning** — training robot po
 3. **Detection Benchmark**: Compare DetectNet and YOLOv8 inference speed on Jetson (or GPU) using TensorRT. Measure FPS at 640x480 and 1280x720 resolutions.
 
 4. **Pose Estimation Pipeline**: Given a set of 2D keypoint detections, implement the PnP solver to recover 6-DOF poses. Validate by projecting 3D bounding boxes back onto the image.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Perception Pipeline"
+  questions={[
+    {
+      id: 1,
+      question: "What is the key advantage of running object detection inference with TensorRT INT8 quantization compared to FP32?",
+      options: [
+        "INT8 models are more accurate than FP32 models on NVIDIA hardware",
+        "INT8 reduces model size and inference latency (typically 2-4x speedup) with minimal accuracy loss after calibration",
+        "INT8 quantization eliminates the need for calibration data",
+        "INT8 is required for ROS 2 sensor_msgs/Image compatibility"
+      ],
+      correctIndex: 1,
+      explanation: "INT8 quantization converts FP32 weights to 8-bit integers. On NVIDIA tensor cores, INT8 operations are much faster (and energy-efficient) than FP32. With proper calibration using representative data, accuracy loss is typically <1% — making it the standard for Jetson deployment.",
+      sectionRef: "#model-quantization",
+      sectionLabel: "Model Quantization"
+    },
+    {
+      id: 2,
+      question: "In the Isaac ROS perception pipeline, what is the purpose of the `isaac_ros_image_proc` package?",
+      options: [
+        "It runs neural network inference on input images",
+        "It provides GPU-accelerated image preprocessing — resizing, color conversion, normalization — preparing images for downstream AI models",
+        "It publishes camera calibration parameters to ROS 2",
+        "It detects and removes motion blur from camera images"
+      ],
+      correctIndex: 1,
+      explanation: "isaac_ros_image_proc provides GPU-accelerated versions of common image processing operations. Running these on the GPU instead of CPU eliminates memory copy bottlenecks and keeps data on the GPU throughout the pipeline — critical for maintaining real-time throughput.",
+      sectionRef: "#image-preprocessing",
+      sectionLabel: "Image Preprocessing"
+    },
+    {
+      id: 3,
+      question: "What is the PnP (Perspective-n-Point) algorithm used for in robot perception?",
+      options: [
+        "It estimates the robot joint positions from motor encoder readings",
+        "It computes the 6-DOF pose (position + orientation) of an object given known 3D points and their corresponding 2D image projections",
+        "It filters point cloud data to remove outlier noise",
+        "It segments the image into foreground and background regions"
+      ],
+      correctIndex: 1,
+      explanation: "Given n known 3D points on an object (e.g., corners of a marker) and their corresponding 2D pixel locations in an image, PnP solves for the camera-to-object transformation. This gives the full 6-DOF pose needed for grasping and manipulation.",
+      sectionRef: "#6dof-pose-estimation",
+      sectionLabel: "6-DOF Pose Estimation"
+    },
+    {
+      id: 4,
+      question: "Why is depth information from a stereo camera or RGBD sensor important for robot manipulation?",
+      options: [
+        "Depth data improves 2D object detection accuracy by adding color channels",
+        "Depth provides the Z-coordinate (distance) that monocular cameras cannot measure, enabling accurate 3D position estimates for grasping",
+        "Depth cameras can detect objects in complete darkness",
+        "Depth data reduces the computational load of neural network inference"
+      ],
+      correctIndex: 1,
+      explanation: "Monocular cameras cannot determine absolute depth — a large distant object looks identical to a small nearby one. Depth cameras measure the Z-axis directly, enabling the robot to compute the 3D position of objects in its workspace for precise grasping.",
+      sectionRef: "#depth-perception",
+      sectionLabel: "Depth Perception"
+    },
+    {
+      id: 5,
+      question: "What is point cloud processing and why is it used in robot perception?",
+      options: [
+        "Point clouds compress camera images for network transmission",
+        "A point cloud is a set of 3D points representing surfaces in the environment; processing it enables 3D object detection, scene reconstruction, and obstacle avoidance",
+        "Point clouds are used to calibrate multiple cameras to a common coordinate frame",
+        "Point cloud processing converts depth images into 2D occupancy grids"
+      ],
+      correctIndex: 1,
+      explanation: "A point cloud (e.g., from a LiDAR or RGBD camera) represents the 3D structure of the environment as a collection of (x,y,z) points. Algorithms like RANSAC plane fitting, voxel downsampling, and 3D object detection on point clouds enable robots to understand and navigate their environment.",
+      sectionRef: "#point-cloud-processing",
+      sectionLabel: "Point Cloud Processing"
+    }
+  ]}
+/>

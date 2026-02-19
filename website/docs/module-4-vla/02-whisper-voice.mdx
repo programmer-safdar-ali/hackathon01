@@ -3,6 +3,8 @@ sidebar_position: 2
 title: "Whisper Voice Integration"
 description: "Integrate OpenAI Whisper for robot speech-to-text, build a ROS 2 audio node, and implement voice command processing for humanoid robots."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Whisper Voice Integration
 
@@ -1304,3 +1306,83 @@ Test with at least 20 different voice commands and report the end-to-end success
 ### Exercise 5: Multilingual Commands
 
 Configure the pipeline to accept commands in two languages (e.g., English and Urdu or English and Spanish). Implement automatic language detection and translate non-English commands to English before parsing. Test with 10 commands in each language.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Whisper Voice Processing"
+  questions={[
+    {
+      id: 1,
+      question: "What type of model is OpenAI Whisper, and what is its primary input/output?",
+      options: [
+        "A text generation model that produces spoken audio from text",
+        "An encoder-decoder transformer model that takes audio waveforms as input and outputs text transcriptions",
+        "A speaker identification model that recognizes who is speaking",
+        "A voice activity detector that identifies when speech is present"
+      ],
+      correctIndex: 1,
+      explanation: "Whisper is an encoder-decoder transformer trained on 680,000 hours of multilingual audio. It takes raw audio (converted to log-mel spectrograms) as input and outputs text transcriptions, optionally with language detection and translation.",
+      sectionRef: "#whisper-model-overview",
+      sectionLabel: "Whisper Model Overview"
+    },
+    {
+      id: 2,
+      question: "What is Voice Activity Detection (VAD) and why is it used before Whisper transcription?",
+      options: [
+        "VAD converts audio from stereo to mono format required by Whisper",
+        "VAD detects segments of audio containing speech, avoiding transcribing silence or background noise and reducing unnecessary Whisper inference calls",
+        "VAD enhances voice quality by removing echo from room acoustics",
+        "VAD identifies the spoken language so Whisper can use the correct model"
+      ],
+      correctIndex: 1,
+      explanation: "Running Whisper on silence or background noise wastes compute and can produce hallucinated transcriptions. VAD (e.g., using Silero VAD) detects speech onset and offset, so Whisper only processes audio segments that actually contain speech.",
+      sectionRef: "#voice-activity-detection",
+      sectionLabel: "Voice Activity Detection"
+    },
+    {
+      id: 3,
+      question: "What is a 'wake word' in a voice-controlled robot system, and why is it used?",
+      options: [
+        "A special voice command that reboots the robot",
+        "A short keyword (e.g., 'Hey Robot') that activates full speech recognition — preventing constant processing of all ambient audio",
+        "The first word spoken in each conversation that sets the command context",
+        "A voice authentication phrase that verifies the operator's identity"
+      ],
+      correctIndex: 1,
+      explanation: "Always running Whisper drains battery and CPU. A lightweight wake word detector (e.g., using Porcupine) runs continuously at low cost, listening only for the trigger phrase. When detected, it activates the full Whisper pipeline for the following command.",
+      sectionRef: "#wake-word-detection",
+      sectionLabel: "Wake Word Detection"
+    },
+    {
+      id: 4,
+      question: "What does the `faster-whisper` library improve compared to the standard OpenAI Whisper implementation?",
+      options: [
+        "It adds support for additional audio formats like FLAC and OGG",
+        "It reimplements Whisper with CTranslate2, providing 2-4x faster inference and lower memory usage through INT8 quantization",
+        "It adds real-time streaming transcription that the original Whisper does not support",
+        "It provides a ROS 2 node wrapper for Whisper out of the box"
+      ],
+      correctIndex: 1,
+      explanation: "faster-whisper uses CTranslate2 as its inference engine with INT8 quantization, reducing inference latency by 2-4x compared to the original PyTorch Whisper implementation — critical for real-time robot voice control where low latency is essential.",
+      sectionRef: "#faster-whisper",
+      sectionLabel: "Faster Whisper"
+    },
+    {
+      id: 5,
+      question: "Why is chunked audio streaming important for low-latency voice command processing in robots?",
+      options: [
+        "Chunked streaming reduces the audio file size for network transmission",
+        "Processing audio in small overlapping chunks allows transcription to begin before the user finishes speaking, reducing perceived response latency",
+        "Chunked processing improves Whisper accuracy by providing more context",
+        "Streaming is required because robots have insufficient memory to buffer full audio recordings"
+      ],
+      correctIndex: 1,
+      explanation: "If the robot waits for the user to finish speaking and then runs Whisper on the complete audio, the response delay includes the full speech duration. Streaming with sliding window chunks allows partial transcription during speech, significantly reducing the time from utterance end to robot action start.",
+      sectionRef: "#streaming-transcription",
+      sectionLabel: "Streaming Transcription"
+    }
+  ]}
+/>

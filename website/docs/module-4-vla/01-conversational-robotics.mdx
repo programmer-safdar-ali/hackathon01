@@ -3,6 +3,8 @@ sidebar_position: 1
 title: "Conversational Robotics"
 description: "Build conversational interfaces for robots with NLU pipelines, intent recognition, dialogue management, and language grounding in physical actions."
 ---
+import KnowledgeCheck from '@site/src/components/KnowledgeCheck';
+
 
 # Conversational Robotics
 
@@ -505,3 +507,83 @@ In the next chapter, we add **voice input** using Whisper for automatic speech r
 3. **Coreference Resolution**: Implement and test coreference resolution for a 5-turn conversation involving multiple objects and locations.
 
 4. **ROS 2 Integration**: Build the conversational node, connect it to a simulated robot, and test a full pick-and-place task driven entirely by text commands.
+
+---
+
+## Knowledge Check
+
+<KnowledgeCheck
+  chapterTitle="Conversational Robotics"
+  questions={[
+    {
+      id: 1,
+      question: "In a conversational robot system, what is the purpose of Named Entity Recognition (NER)?",
+      options: [
+        "It assigns names to ROS 2 nodes in the computation graph",
+        "It identifies and classifies specific entities (objects, locations, quantities) within a natural language command",
+        "It recognizes the speaker's name from voice recordings",
+        "It maps entity names to robot joint identifiers"
+      ],
+      correctIndex: 1,
+      explanation: "NER extracts structured information from natural language. In 'Pick up the red cup from the table', NER identifies 'red cup' as an object and 'table' as a location. This structured information is then passed to the action planner to generate robot commands.",
+      sectionRef: "#natural-language-understanding",
+      sectionLabel: "Natural Language Understanding"
+    },
+    {
+      id: 2,
+      question: "What is intent recognition in conversational robotics, and what does a well-designed intent system return?",
+      options: [
+        "It determines whether the user is speaking English or another language",
+        "It classifies the user's goal (e.g., PICK_OBJECT, NAVIGATE_TO, STOP) and returns a structured intent label with extracted slots (parameters)",
+        "It detects the emotional tone of the user's voice",
+        "It decides which ROS 2 service to call based on voice pitch"
+      ],
+      correctIndex: 1,
+      explanation: "Intent recognition maps natural language to a predefined set of robot actions. 'Bring me the bottle' → intent: PICK_AND_BRING, slots: {object: 'bottle', recipient: 'me'}. The slots provide the parameters needed to execute the action.",
+      sectionRef: "#intent-recognition",
+      sectionLabel: "Intent Recognition"
+    },
+    {
+      id: 3,
+      question: "What is the role of dialogue state tracking in a multi-turn robot conversation?",
+      options: [
+        "It tracks how long the current conversation has been running",
+        "It maintains context across turns — remembering what was said, what actions were taken, and what remains to be clarified",
+        "It detects when the user has finished speaking so the robot can respond",
+        "It logs all conversation turns to a database for later analysis"
+      ],
+      correctIndex: 1,
+      explanation: "Dialogue state tracking maintains the conversation context. If a user says 'Pick up the cup' then 'Now put it on the shelf', the tracker remembers 'it' refers to the cup. Without state tracking, each turn is interpreted in isolation, breaking multi-step instructions.",
+      sectionRef: "#dialogue-state-tracking",
+      sectionLabel: "Dialogue State Tracking"
+    },
+    {
+      id: 4,
+      question: "What is coreference resolution and why is it important for robot instruction following?",
+      options: [
+        "It resolves ambiguous joint names that appear in multiple robot models",
+        "It determines what pronouns like 'it', 'there', or 'that one' refer to, linking them back to previously mentioned entities",
+        "It matches ROS 2 service names to their correct packages",
+        "It detects when the same instruction is repeated by the user"
+      ],
+      correctIndex: 1,
+      explanation: "In 'Grab the apple. Put it in the basket', 'it' refers to 'the apple'. Coreference resolution links pronouns to their antecedents. Without it, the robot would not know what to put in the basket — making multi-step instructions impossible to follow.",
+      sectionRef: "#coreference-resolution",
+      sectionLabel: "Coreference Resolution"
+    },
+    {
+      id: 5,
+      question: "Why is it important for a conversational robot to explicitly ask for clarification when an instruction is ambiguous?",
+      options: [
+        "It is never important — robots should always attempt to execute with their best guess",
+        "Asking for clarification prevents the robot from taking a wrong (potentially dangerous) action based on an incorrect interpretation of an ambiguous command",
+        "Asking for clarification buys time for the planning algorithm to finish computing",
+        "It is a legal requirement for robots operating near humans"
+      ],
+      correctIndex: 1,
+      explanation: "If a user says 'move the thing' in a cluttered environment, guessing wrong could displace an important object or cause a collision. Explicitly asking 'Which object would you like me to move?' is safer and builds user trust — especially in household or collaborative robot settings.",
+      sectionRef: "#clarification-strategies",
+      sectionLabel: "Clarification Strategies"
+    }
+  ]}
+/>
